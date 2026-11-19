@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Changeover">
-<title>Changeover — padel scoreboard &amp; side-change coach</title>
+<meta name="apple-mobile-web-app-title" content="Punto">
+<title>Punto — padel scoreboard &amp; side-change coach</title>
 <script>/* theme before first paint: saved choice, else system */
 (()=>{let t;try{t=JSON.parse(localStorage.getItem('changeover.theme'))}catch(e){}
 document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')})();</script>
@@ -159,7 +159,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
 </head>
 <body>
 <header class="top">
-  <button class="brand" id="homeBtn" aria-label="Home"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="2" width="24" height="24" rx="7" fill="var(--us)"/><path d="M8 11h12l-3-3M20 17H8l3 3" fill="none" stroke="var(--on)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Changeover</span></button>
+  <button class="brand" id="homeBtn" aria-label="Home"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="2" width="24" height="24" rx="7" fill="var(--us)"/><path d="M8 11h12l-3-3M20 17H8l3 3" fill="none" stroke="var(--on)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Punto</span></button>
   <div class="tabs" id="tabs"><button id="tabBoard">Score</button><button id="tabStats">Insights</button></div>
   <button class="pill" id="awakeBtn" title="Keep the screen on during the match"></button>
   <button class="icon" id="micBtn" title="Listen for ball bounces (M)" aria-label="Microphone" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 7.5a5 5 0 0 0 10 0M8 12.5V15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
@@ -249,11 +249,11 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
 
 <div class="overlay" id="help" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
-    <h3 id="helpTitle">Changeover</h3>
+    <h3 id="helpTitle">Punto</h3>
     <p>A padel scoreboard you stand facing the court, with a coach for every change of ends. It keeps the score with star point, golden point or advantage, shows who serves from which side and who receives, times every point, game and set, listens for ball bounces, and saves every match to your history.</p>
     <ol>
       <li><b>New match</b>: enter names, positions (drive / revés), serve order and the deuce rule.</li>
-      <li>After each point, tap the half of the team that won it. Undo is always one tap away.</li>
+      <li>After each point, tap the half of the team that won it. A high beep means your team got the point, a low beep the rivals, a long deep beep an undo. Undo is always one tap away.</li>
       <li>On every change of ends the coach opens by itself: one focus, a 90-second timer, an optional "what hurt" tag.</li>
       <li>Finished matches are saved automatically; press <b>End</b> to save an unfinished one when your court time runs out.</li>
     </ol>
@@ -449,7 +449,7 @@ function renderHome(){
   $('demoNote').innerHTML=demo?'Includes demo matches. <button id="clearDemo">Clear demo data</button>':'';
   if(demo)$('clearDemo').onclick=actions.clearDemo;
   const ios=/iP(hone|ad|od)/.test(navigator.userAgent), standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-  $('installTip').textContent=ios&&!standalone?'Tip: tap Share → Add to Home Screen to run Changeover full screen, like an app.':'';
+  $('installTip').textContent=ios&&!standalone?'Tip: tap Share → Add to Home Screen to run Punto full screen, like an app.':'';
 }
 
 function renderBoard(){
@@ -538,6 +538,7 @@ function award(w){
   save(); render();
   const el=$('team'+w); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
   if(navigator.vibrate&&touch.matches)navigator.vibrate(15);
+  beep(w?440:880,.12);   // hear which team got the point: high = your team, low = rivals
   if(e.ev==='match')openCoach(0);
   else if(e.change==='change'||e.change==='break')openCoach(e.change==='break'?120:90);
   else if(e.change==='tb')toast('Change ends');
@@ -608,7 +609,7 @@ function frame(now){
     mic.floor=mic.floor*.995+Math.min(pk,mic.floor*3)*.005;
     const thr=Math.max(.015,mic.floor*(12-sens));
     if(screen==='stats')$('lvl').style.width=Math.min(100,pk/thr*70)+'%';
-    if(pk>thr&&now-live.last>200)hit(now);
+    if(pk>thr&&now-live.last>200&&now>muteUntil)hit(now);
   }
   if(live.cur&&now-live.last>2600)closeRally();
   if(timer)tick(now);
@@ -618,8 +619,10 @@ function frame(now){
 
 // ── audio + screen: created only after a user gesture ──
 function audio(){ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume().catch(()=>{});return ac}
+let muteUntil=0;   // the mic ignores the app's own beeps
 function beep(f,d=.18){
   if(!ac)return; const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;
+  muteUntil=performance.now()+d*1000+150;
   o.frequency.value=f; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.3,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+d);
   o.connect(g).connect(ac.destination); o.start(); o.stop(t+d+.02);
 }
@@ -662,7 +665,7 @@ const actions={
     if(!match||!match.points.length)return toast('Nothing to undo');
     if(view.winner!==null)history=history.filter(h=>h.id!==match.id);
     match.points.pop(); if(match.notes.at(-1)?.at>match.points.length)match.notes.pop();
-    closeCoach(); save(); render(); toast('Last point undone');
+    closeCoach(); save(); render(); beep(220,.35); toast('Last point undone');
   },
   end(){
     if(!match)return;
@@ -674,7 +677,7 @@ const actions={
   sens(d){sens=Math.min(9,Math.max(1,sens+d));store.set('changeover.sens',sens);renderRadar();toast(`Bounce sensitivity ${sens}`)},
   full(){
     if(document.fullscreenElement)return document.exitFullscreen().catch(()=>{});
-    if(!document.documentElement.requestFullscreen)return toast('Full screen: add Changeover to your Home Screen');
+    if(!document.documentElement.requestFullscreen)return toast('Full screen: add Punto to your Home Screen');
     document.documentElement.requestFullscreen().catch(()=>toast('Full screen was blocked by the browser'));
   },
 };

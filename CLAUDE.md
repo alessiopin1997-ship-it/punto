@@ -1,4 +1,4 @@
-# Changeover — padel scoreboard & side-change coach
+# Punto (was Changeover) — padel scoreboard & side-change coach
 
 ## Who you are working with
 - The owner is **not a technical person** and builds side projects alone. Explain choices in plain language, avoid jargon, and say what they need to do on their side (e.g. on GitHub or on the iPhone) step by step.
