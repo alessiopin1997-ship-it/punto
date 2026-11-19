@@ -123,7 +123,14 @@ h2{margin-bottom:12px}h2 small,.eyebrow small{letter-spacing:.04em;text-transfor
 .sens{display:flex;gap:4px;align-items:center}.sens button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line)}
 .kv{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.kv span{font-size:12px;color:var(--dim)}.kv b{display:block;font:800 22px var(--num);color:var(--ink);font-variant-numeric:tabular-nums}
 .sub{margin-top:12px;font-size:13px;color:var(--dim)}
-table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:7px 4px;text-align:left;border-top:1px solid var(--line)}th{font:600 11px var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.06em;border:0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+.deep td:last-child{text-align:right;white-space:nowrap}
+.trend{display:grid;grid-template-columns:1fr auto 120px;gap:8px 12px;align-items:center;font-size:13px}
+.trend b{font:800 18px var(--num)}.trend small{color:var(--dim)}
+.trend svg{width:120px;height:32px;overflow:visible}
+.trend polyline{fill:none;stroke:var(--us);stroke-width:2;stroke-linejoin:round}.trend circle{fill:var(--us);stroke:var(--panel);stroke-width:1.5}.trend line{stroke:var(--line);stroke-dasharray:3 3}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:8px 10px;align-items:center;font-size:13px}
+.bars i{display:block;height:8px;border-radius:4px;background:var(--us);min-width:8px}td,th{padding:7px 4px;text-align:left;border-top:1px solid var(--line)}th{font:600 11px var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.06em;border:0}
 td small{color:var(--dim)}td b{font:800 15px var(--num)}.t0{color:var(--us)}.t1{color:var(--them)}
 .sets td{font:800 26px var(--num);text-align:center;border:0;padding:2px 6px}.sets td:first-child{font:700 15px var(--font);text-align:left}.sets .w{color:var(--ink)}.sets .l{color:var(--dim)}
 
@@ -186,6 +193,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
   <section class="card resume" id="resume"></section>
   <button class="cta" id="newBtn" data-it="Nuova partita &lt;kbd&gt;N&lt;/kbd&gt;">New match <kbd>N</kbd></button>
   <section class="card"><h2><span data-it="Storico partite">Match history</span> <small id="hCount"></small></h2><div class="hlist" id="hlist"></div><p class="note" id="demoNote"></p></section>
+  <section class="card" id="overall" hidden></section>
   <p class="note" id="installTip"></p>
   <div><button class="btn" id="langBtn"></button></div>
 </main>
@@ -217,6 +225,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
     <div class="level"><span>Mic</span><div class="meter"><i id="lvl"></i></div>
       <div class="sens"><button id="sensDown" aria-label="Less sensitive" data-it-aria="Meno sensibile">−</button><span id="sensV"></span><button id="sensUp" aria-label="More sensitive" data-it-aria="Più sensibile">+</button></div></div>
   </section>
+  <div id="deep" style="display:contents"></div>
   <section class="card"><h2 data-it="Tempo in campo">Time on court</h2><div class="kv" id="times"></div><p class="sub" id="setTimes"></p></section>
   <section class="card"><h2 data-it="Giocatori &lt;small&gt;servizi tenuti · punti vinti in risposta&lt;/small&gt;">Players <small>serve holds · return points won</small></h2><table id="players"></table></section>
 </main>
@@ -345,6 +354,7 @@ function replay(m){
     if(s.winner!==null)break;
     const [st,sp]=serverAt(), side=(s.pts[0]+s.pts[1])%2, rt=1-st, w=p.w;
     const decisive=!s.tb&&s.pts[0]===s.pts[1]&&s.pts[0]>=D;
+    const tb=s.tb, gi=s.gameLog.length, pre=[s.pts[0],s.pts[1]], bp=!tb&&(decisive||pre[rt]>=3&&pre[rt]>pre[st]);   // bp: receivers win the game with this point
     s.srvPts[st][0]++; if(!w)s.srvPts[st][1]++;                  // [served, won by your team]
     s.rx[rt][side][0]++; if(w===rt)s.rx[rt][side][1]++;          // receiver: drive on even points, revés on odd
     if(decisive){s.dp[0]++;if(!w)s.dp[1]++}
@@ -361,7 +371,7 @@ function replay(m){
         if(++s.sets[w]===2){s.winner=w;ev='match'}else change=odd?'change':'break';
       }else{s.tb=ga===6&&gb===6; if(odd)change='change'}
     }else if(s.tb&&(a+b)%6===0)change='tb';
-    s.meta.push({w,ev,change});
+    s.meta.push({w,ev,change,st,side,pre,tb,dec:decisive,bp,gi});
   }
   s.next=serverAt(); s.side=(s.pts[0]+s.pts[1])%2;
   s.deuce=!s.tb&&s.pts[0]===s.pts[1]&&s.pts[0]>=3?s.pts[0]-2:0;   // 1st, 2nd, 3rd deuce…
@@ -396,6 +406,23 @@ function rallyInsight(m){
   const thr=avg(P.map(p=>p.s)), pct=a=>a.length>=4?Math.round(100*a.filter(p=>!p.w).length/a.length):null;
   const short=pct(P.filter(p=>p.s<thr)), long=pct(P.filter(p=>p.s>=thr));
   return short===null||long===null||Math.abs(short-long)<15?null:{short,long,thr:Math.round(thr)};
+}
+// Deeper stats, all from the replayed points: {n: points, won: by your team}
+function deep(m,s){
+  const M=s.meta, ng=M.filter(e=>!e.tb), f=a=>({n:a.length,won:a.filter(e=>!e.w).length}), tie=e=>e.pre[0]===e.pre[1];
+  const run=(a,t)=>{let best=0,c=0;for(const x of a){c=x.w===t?c+1:0;best=Math.max(best,c)}return best};
+  const first=[{n:0,won:0},{n:0,won:0}];   // games after winning [0] / losing [1] the first point
+  for(const e of ng){const g=s.gameLog[e.gi];if(!e.pre[0]&&!e.pre[1]&&g){first[e.w].n++;if(!g.w)first[e.w].won++}}
+  const third=i=>{const a=m.points.slice(Math.floor(i*M.length/3),Math.floor((i+1)*M.length/3)),d=a.map(p=>p.d).filter(x=>x<120000);return{...f(a),d:d.length?avg(d):0}};
+  return{
+    bpFor:f(ng.filter(e=>e.bp&&e.st===1)), bpVs:f(ng.filter(e=>e.bp&&e.st===0)),
+    p3030:f(ng.filter(e=>e.pre[0]===2&&e.pre[1]===2)), deuce:f(ng.filter(e=>tie(e)&&e.pre[0]>=3&&!e.dec)), dec:f(ng.filter(e=>e.dec)),
+    other:f(ng.filter(e=>!e.bp&&!e.dec&&!(tie(e)&&e.pre[0]>=2))),
+    srv:[0,1].map(sd=>f(M.filter(e=>e.st===0&&e.side===sd))), ret:[0,1].map(sd=>f(M.filter(e=>e.st===1&&e.side===sd))),   // return side 0 = drive receives
+    thirds:M.length>=15?[0,1,2].map(third):null,
+    afterLoss:f(M.filter((e,i)=>i&&M[i-1].w===1)), afterWin:f(M.filter((e,i)=>i&&M[i-1].w===0)),
+    runPts:[run(M,0),run(M,1)], runGames:[run(s.gameLog,0),run(s.gameLog,1)], first,
+  };
 }
 const held=(s,t)=>s.sv[t][0][1]+s.sv[t][1][1], served=(s,t)=>s.sv[t][0][0]+s.sv[t][1][0];
 
@@ -483,11 +510,33 @@ function renderHome(){
   $('hlist').innerHTML=history.length?history.map(h=>{const s=replay(h);return`<button class="hrow" data-id="${esc(h.id)}"><b>${esc(teamName(h,0))} ${resultBadge(s)}</b><span class="hs">${scoreLine(s)}</span>
       <small>vs ${esc(teamName(h,1))} · ${when(h.start)} · ${clock(s.total)}</small></button>`}).join('')
     :`<p class="empty">${tr('Every match you finish — or end early — is saved here with its stats.','Ogni partita che finisci — o chiudi prima — viene salvata qui con le sue statistiche.')}</p>`;
+  renderOverall();
   const demo=history.some(h=>h.demo)||match?.demo;
   $('demoNote').innerHTML=demo?`${tr('Includes demo matches.','Include partite demo.')} <button id="clearDemo">${tr('Clear demo data','Cancella dati demo')}</button>`:'';
   if(demo)$('clearDemo').onclick=actions.clearDemo;
   const ios=/iP(hone|ad|od)/.test(navigator.userAgent), standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
   $('installTip').textContent=ios&&!standalone?tr('Tip: tap Share → Add to Home Screen to run Punto full screen, like an app.','Consiglio: tocca Condividi → Aggiungi alla schermata Home per usare Punto a tutto schermo, come un’app.'):'';
+}
+
+// Across saved matches: one small line per measure (oldest → newest), and the "what hurt" tags
+function renderOverall(){
+  const H=[...history].reverse(), el=$('overall'); el.hidden=H.length<2; if(el.hidden)return;
+  const P=(a,b)=>b?100*a/b:null, rows=H.map(h=>{const s=replay(h);return{h,s,pts:P(h.points.filter(p=>!p.w).length,h.points.length),hold:P(held(s,0),served(s,0)),brk:P(served(s,1)-held(s,1),served(s,1)),dec:P(s.dp[1],s.dp[0])}});
+  const W=rows.filter(r=>r.s.winner===0).length, L=rows.filter(r=>r.s.winner===1).length;
+  const line=(k,label)=>{
+    const v=rows.map(r=>r[k]), ok=v.map((x,i)=>[x,i]).filter(([x])=>x!==null); if(!ok.length)return'';
+    const X=i=>rows.length>1?4+i/(rows.length-1)*112:60, Y=x=>28-x*.24;
+    return`<span>${label}</span><span><b>${Math.round(ok.at(-1)[0])}%</b> <small>${tr('avg','media')} ${Math.round(avg(ok.map(([x])=>x)))}%</small></span>
+      <svg viewBox="0 0 120 32" role="img" aria-label="${label}"><line x1="0" x2="120" y1="${Y(50)}" y2="${Y(50)}"/><polyline points="${ok.map(([x,i])=>`${X(i).toFixed(1)},${Y(x).toFixed(1)}`).join(' ')}"/>
+      ${ok.map(([x,i])=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(x).toFixed(1)}" r="${i===ok.at(-1)[1]?4:2.5}"><title>${when(rows[i].h.start)} · ${Math.round(x)}%</title></circle>`).join('')}</svg>`;
+  };
+  const count={}; for(const h of history)for(const n of h.notes||[])if(n.tag)count[n.tag]=(count[n.tag]||0)+1;
+  const tags=TAGS.filter(t=>count[t.k]).sort((a,b)=>count[b.k]-count[a.k]), top=tags.length?count[tags[0].k]:1;
+  el.innerHTML=`<h2>${tr('Your numbers','I tuoi numeri')} <small>${H.length} ${tr('matches','partite')} · ${W} ${tr('won','vinte')} – ${L} ${tr('lost','perse')}</small></h2>
+    <div class="trend">${line('pts',tr('Points won','Punti vinti'))}${line('hold',tr('Serve held','Servizi tenuti'))}${line('brk',tr('Breaks','Break'))}${line('dec',tr('Deciding points','Punti decisivi'))}</div>
+    <h2 style="margin-top:16px">${tr('What hurt most','Cosa vi fa più male')}</h2>
+    ${tags.length?`<div class="bars">${tags.map(t=>`<span>${tg(t,'n')}</span><i style="width:${Math.round(100*count[t.k]/top)}%"></i><b>${count[t.k]}</b>`).join('')}</div>`
+      :`<p class="empty">${tr('No tags yet — pick "what hurt you most" in the coach.','Nessun tag per ora — scegli "cosa vi ha fatto più male" nel coach.')}</p>`}`;
 }
 
 function renderBoard(){
@@ -523,11 +572,22 @@ function spark(m,s){
   return{p:tr.at(-1),svg:`<line class="mid" x1="0" x2="300" y1="${Y(.5)}" y2="${Y(.5)}"/>${s.meta.map((e,i)=>e.ev==='set'?`<line class="set" x1="${X(i+1)}" x2="${X(i+1)}" y1="0" y2="70"/>`:'').join('')}<polyline points="${tr.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')}"/>`};
 }
 
+const fr=x=>x.n?`<b>${Math.round(100*x.won/x.n)}%</b> <small>${x.won}/${x.n}</small>`:'<small>–</small>';
+function deepCards(m,s){
+  const D=deep(m,s), N=m.players, row=(l,x,extra='')=>`<tr><td>${l}${extra}</td><td>${fr(x)}</td></tr>`, cap=`<small>${tr('% of points your team won','% punti vinti dalla tua squadra')}</small>`;
+  const T=D.thirds, ph=[tr('Start','Inizio'),tr('Middle','Metà'),tr('End','Fine')];
+  return[
+    [tr('Key moments','Momenti chiave')+' '+cap,`<table class="deep">${row(tr('Your break points','Palle break vostre'),D.bpFor)}${row(tr('Their break points saved','Palle break salvate'),D.bpVs)}${row('30–30',D.p3030)}${row(tr('Deuce','Parità'),D.deuce)}${row(tr('Deciding points','Punti decisivi'),D.dec)}${row(tr('All other points','Tutti gli altri punti'),D.other)}</table>`],
+    [tr('Sides','Lati')+' '+cap,`<table class="deep">${row(tr('Your serve from the right','Vostro servizio da destra'),D.srv[0])}${row(tr('Your serve from the left','Vostro servizio da sinistra'),D.srv[1])}${[0,1].map(p=>row(`${tr('Return','Risposta')} · ${esc(N[0][p])}`,D.ret[p],` <small>${pos(p)}</small>`)).join('')}</table>`],
+    [tr('Match flow','Andamento della partita')+' '+cap,`<table class="deep">${T?T.map((x,i)=>row(ph[i],x,` <small>${tr('avg point','punto medio')} ${clock(x.d)}</small>`)).join(''):''}${row(tr('After losing a point','Dopo un punto perso'),D.afterLoss)}${row(tr('After winning a point','Dopo un punto vinto'),D.afterWin)}${row(tr('Games after winning the 1st point','Game vinti dopo aver vinto il 1° punto'),D.first[0])}${row(tr('Games after losing the 1st point','Game vinti dopo aver perso il 1° punto'),D.first[1])}
+      <tr><td>${tr('Longest run (you – them)','Serie più lunga (voi – loro)')}</td><td><b>${D.runPts[0]}–${D.runPts[1]}</b> <small>${tr('points','punti')}</small> <b>${D.runGames[0]}–${D.runGames[1]}</b> <small>game</small></td></tr></table>`],
+  ];
+}
 function renderStats(){
   const s=view, {cue,chips}=coach(match,s), sp=spark(match,s), ts=timeStats(match,s);
   $('cue').textContent=cue.t; $('tip').textContent=cue.tip; $('chips').innerHTML=chips.map(c=>`<span>${c}</span>`).join('');
   $('spark').innerHTML=sp.svg; $('prob').textContent=Math.round(sp.p*100)+'%';
-  $('times').innerHTML=ts.kv; $('setTimes').textContent=ts.sub; $('players').innerHTML=playersTable(match,s);
+  $('times').innerHTML=ts.kv; $('setTimes').textContent=ts.sub; $('players').innerHTML=playersTable(match,s); $('deep').innerHTML=deepCards(match,s).map(([t,x])=>`<section class="card"><h2>${t}</h2>${x}</section>`).join('');
   renderRadar();
 }
 
@@ -556,6 +616,7 @@ function openReport(id){
     <h2 style="margin-top:18px">${tr('Match pulse','Andamento')}</h2><svg class="spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true">${sp.svg}</svg>
     <h2 style="margin-top:18px">${tr('Time on court','Tempo in campo')}</h2><div class="kv">${ts.kv}</div><p class="sub">${ts.sub}</p>
     <h2 style="margin-top:18px">${tr('Players','Giocatori')}</h2><table>${playersTable(m,s)}</table>
+    ${deepCards(m,s).map(([t,x])=>`<h2 style="margin-top:18px">${t}</h2>${x}`).join('')}
     <div class="row2"><button class="btn danger" id="delBtn">${tr('Delete','Elimina')}</button><button class="btn" id="repClose">${tr('Close','Chiudi')}</button></div>`;
   $('report').hidden=false;
   $('repClose').onclick=()=>$('report').hidden=true;
