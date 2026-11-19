@@ -192,7 +192,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
   <h1 class="hello" data-it="Pronto per il &lt;span&gt;padel&lt;/span&gt;?">Ready for <span>padel</span>?</h1>
   <section class="card resume" id="resume"></section>
   <button class="cta" id="newBtn" data-it="Nuova partita &lt;kbd&gt;N&lt;/kbd&gt;">New match <kbd>N</kbd></button>
-  <section class="card"><h2><span data-it="Storico partite">Match history</span> <small id="hCount"></small></h2><div class="hlist" id="hlist"></div><p class="note" id="demoNote"></p></section>
+  <section class="card"><h2><span data-it="Storico partite">Match history</span> <small id="hCount"></small></h2><div class="hlist" id="hlist"></div></section>
   <section class="card" id="overall" hidden></section>
   <p class="note" id="installTip"></p>
   <div><button class="btn" id="langBtn"></button></div>
@@ -450,29 +450,15 @@ function coach(m,s){
   return{cue,chips};
 }
 
-// Demo data: deterministic matches so the app never opens empty
-function simulate(seed,players,stop,daysAgo=0){
-  let a=seed; const r=()=>(a=a*16807%2147483647)/2147483647, t0=Date.now()-daysAgo*864e5;
-  const m={id:'demo'+seed,players,first:0,order:[0,0],rule:'star',points:[],notes:[],mark:Date.now(),start:t0,demo:true};
-  for(let s=replay(m);!stop(s)&&m.points.length<400;s=replay(m)){
-    const [st,sp]=s.next, shots=3+Math.floor(r()*r()*16);
-    const pw=(st?.42:sp?.5:.66)+(shots>=8?-.15:.07);              // the revés serve is weak, long rallies cost points
-    m.points.push({w:r()<pw?0:1,d:Math.round(9000+shots*2400+r()*9000),s:shots});
-  }
-  return daysAgo?{...m,endedAt:t0+replay(m).total}:m;
-}
-const demoMatch=()=>simulate(60,[['Marco','Luca'],['Diego','Pablo']],s=>s.sets[0]+s.sets[1]===1&&s.games[0]+s.games[1]>=5&&s.pts[0]+s.pts[1]>=2);
-const demoHistory=()=>[[5,'Gio','Nico',2],[12,'Diego','Pablo',6],[21,'Sara','Ale',11]].map(([seed,x,y,d])=>simulate(seed,[['Marco','Luca'],[x,y]],s=>s.winner!==null,d));
-
 // ── state + storage ──
 const $=id=>document.getElementById(id);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)'), touch=matchMedia('(hover: none)');
 const store={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){if(!store.warned){store.warned=true;toast(tr('Not saved — phone storage is full or blocked','Non salvato — memoria del telefono piena o bloccata'))}}}};
 const fix=m=>m&&Array.isArray(m.points)&&Array.isArray(m.players)?{rule:m.golden===false?'adv':'golden',notes:[],start:Date.now(),id:String(Date.now()),...m}:null;   // older saves had a golden flag
-const firstRun=store.get('changeover.history')===null;
-let match=firstRun?demoMatch():fix(store.get('changeover.v2'));
-let history=firstRun?demoHistory():(store.get('changeover.history')||[]).map(fix).filter(Boolean);
-let view=match&&replay(match), screen=match&&!match.demo?'board':'home', timer=null, coachOpen=false, lock=null, ac=null, mic=null, undoEnd=null, lastTap=0, setupMode='new';
+// older versions seeded demo matches (demo:true); they are dropped here and vanish on the next save
+let match=fix(store.get('changeover.v2')); if(match?.demo)match=null;
+let history=(store.get('changeover.history')||[]).map(fix).filter(h=>h&&!h.demo);
+let view=match&&replay(match), screen=match?'board':'home', timer=null, coachOpen=false, lock=null, ac=null, mic=null, undoEnd=null, lastTap=0, setupMode='new';
 let sens=store.get('changeover.sens')||5;
 const live={cur:0,last:0,first:0,best:0};
 const save=()=>{store.set('changeover.v2',match);store.set('changeover.history',history)};
@@ -499,11 +485,11 @@ function renderHome(){
   r.hidden=!match;
   if(match){
     const s=view;
-    r.innerHTML=`<h2>${match.demo?tr('Demo match','Partita demo'):tr('Match in progress','Partita in corso')} <small>${ruleName(match.rule)}</small></h2>
+    r.innerHTML=`<h2>${tr('Match in progress','Partita in corso')} <small>${ruleName(match.rule)}</small></h2>
       <b>${esc(teamName(match,0))}</b> <span class="empty">vs</span> <b>${esc(teamName(match,1))}</b>
       <p class="score">${scoreLine(s)||'0–0'} ${s.winner===null?`<small class="empty">${pointLabel(s,0)}–${pointLabel(s,1)}</small>`:resultBadge(s)}</p>
       <p>${clock(s.total)} ${tr('on court','in campo')} · ${match.points.length} ${tr('points','punti')}</p>
-      <div class="acts"><button class="btn go" id="resumeBtn">${s.winner===null?tr('Resume','Riprendi'):tr('View','Vedi')}</button><button class="btn" id="endBtn2">${match.demo?tr('Discard demo','Scarta demo'):tr('End &amp; save','Fine e salva')}</button></div>`;
+      <div class="acts"><button class="btn go" id="resumeBtn">${s.winner===null?tr('Resume','Riprendi'):tr('View','Vedi')}</button><button class="btn" id="endBtn2">${tr('End &amp; save','Fine e salva')}</button></div>`;
     $('resumeBtn').onclick=()=>go('board'); $('endBtn2').onclick=actions.end;
   }
   $('hCount').textContent=history.length?`${history.length} ${tr('saved','salvate')}`:'';
@@ -511,9 +497,6 @@ function renderHome(){
       <small>vs ${esc(teamName(h,1))} · ${when(h.start)} · ${clock(s.total)}</small></button>`}).join('')
     :`<p class="empty">${tr('Every match you finish — or end early — is saved here with its stats.','Ogni partita che finisci — o chiudi prima — viene salvata qui con le sue statistiche.')}</p>`;
   renderOverall();
-  const demo=history.some(h=>h.demo)||match?.demo;
-  $('demoNote').innerHTML=demo?`${tr('Includes demo matches.','Include partite demo.')} <button id="clearDemo">${tr('Clear demo data','Cancella dati demo')}</button>`:'';
-  if(demo)$('clearDemo').onclick=actions.clearDemo;
   const ios=/iP(hone|ad|od)/.test(navigator.userAgent), standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
   $('installTip').textContent=ios&&!standalone?tr('Tip: tap Share → Add to Home Screen to run Punto full screen, like an app.','Consiglio: tocca Condividi → Aggiungi alla schermata Home per usare Punto a tutto schermo, come un’app.'):'';
 }
@@ -638,7 +621,7 @@ function award(w){
   live.best=live.cur=0; match.points.push(p); match.mark=now;
   view=replay(match);
   const e=view.meta.at(-1);
-  if(e.ev==='match'&&!match.demo)archive(match);
+  if(e.ev==='match')archive(match);
   save(); render();
   const el=$('team'+w); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
   if(navigator.vibrate&&touch.matches)navigator.vibrate(15);
@@ -803,7 +786,7 @@ form.addEventListener('submit',e=>{
   store.set('changeover.last',cfg);
   if(setupMode==='edit')Object.assign(match,cfg);
   else{
-    if(match&&!match.demo&&match.points.length)archive(match);
+    if(match&&match.points.length)archive(match);
     undoEnd=null; match={id:Date.now().toString(36),...cfg,points:[],notes:[],mark:Date.now(),start:Date.now()};
     live.best=live.cur=0; screen='board';
   }
@@ -823,10 +806,9 @@ const actions={
   },
   end(){
     if(!match)return;
-    if(!match.demo&&match.points.length){archive(match);undoEnd=match;toast(tr('Saved to history — U restores it','Salvata nello storico — Annulla la ripristina'))}else toast(match.demo?tr('Demo discarded','Demo scartata'):tr('Empty match discarded','Partita vuota scartata'));
+    if(match.points.length){archive(match);undoEnd=match;toast(tr('Saved to history — U restores it','Salvata nello storico — Annulla la ripristina'))}else toast(tr('Empty match discarded','Partita vuota scartata'));
     match=null; hideServe(); closeCoach(); screen='home'; save(); render();
   },
-  clearDemo(){history=history.filter(h=>!h.demo);if(match?.demo)match=null;save();render();toast(tr('Demo data cleared','Dati demo cancellati'))},
   theme(){const th=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=th;store.set('changeover.theme',th)},
   sens(d){sens=Math.min(9,Math.max(1,sens+d));store.set('changeover.sens',sens);renderRadar();toast(`${tr('Bounce sensitivity','Sensibilità rimbalzi')} ${sens}`)},
   lang(){lang=tr('it','en');store.set('changeover.lang',lang);applyLang();render();if(coachOpen)renderCoach();toast(tr('Language: English','Lingua: italiano'))},
@@ -885,7 +867,6 @@ addEventListener('keydown',e=>{
 });
 
 matchMedia('(prefers-color-scheme: light)').addEventListener('change',e=>{if(!store.get('changeover.theme'))document.documentElement.dataset.theme=e.matches?'light':'dark'});
-if(firstRun)save();
 render(); requestAnimationFrame(frame);
 </script>
 </body>

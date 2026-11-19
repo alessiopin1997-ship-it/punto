@@ -23,16 +23,16 @@ A padel match app used **mainly on iPhone**, with the phone placed at the court 
 - **"Your numbers" card on Home** (≥2 saved matches): W–L, sparklines oldest→newest for points won / serve held / breaks / deciding points, and "what hurt most" tag counts across matches. Not built (owner skipped): per partner / per opponent stats.
 - **Home + history**: resume / end & save the current match, New match, history of saved matches with a full report per match (delete possible). Finished matches auto-save; "End" saves unfinished ones (court time ran out).
 - **English / Italian**: follows the phone's language, "Italiano / English" button on Home (and L key) overrides it and is remembered. Italian positions: *dritto* / *rovescio*. In code: `tr(en,it)` for dynamic text; static HTML carries `data-it` (innerHTML), `data-it-ph` (placeholder), `data-it-aria` (aria-label), applied by `applyLang()`. **Every new user-facing string needs both languages.**
-- Dark/light theme (follows system, toggle remembered), help overlay (`?`), keyboard shortcuts for every action, demo data on first run ("Clear demo data" removes it).
+- Dark/light theme (follows system, toggle remembered), help overlay (`?`), keyboard shortcuts for every action. No demo data: the app opens empty (old demo matches are dropped on load).
 
 ## How it is built (today)
 - **One file: `index.html`** (was `changeover.html`; renamed so the GitHub Pages link opens it directly). Images next to it: `icon-180.png` (Home Screen icon, cropped from the owner's `Punto_applogo.png` so iOS does the rounding) and `logo.png` (header wordmark from `Punto_weblogo.png`, white letters — light theme recolours it with CSS `invert(1) hue-rotate(180deg)`). Originals kept in the repo. — HTML, CSS and JavaScript inline, no libraries, no network requests, system fonts only.
 - Structure inside the script:
-  - **Model (pure functions)**: `replay(match)` rebuilds the whole state (score, server rotation, tiebreaks, stats, timings) from the list of points. Undo and rule changes work by replaying. `winProb`, `rallyInsight`, `coach`, `simulate` (demo data).
+  - **Model (pure functions)**: `replay(match)` rebuilds the whole state (score, server rotation, tiebreaks, stats, timings) from the list of points. Undo and rule changes work by replaying. `winProb`, `rallyInsight`, `coach`.
   - **View**: `render()` → `renderHome` / `renderBoard` / `renderStats`, plus coach screen, setup sheet (new/edit), report sheet, help.
   - **Input**: `award(w)` (w = 0 your team, 1 rivals), `actions.undo/end/...`, keyboard handler.
   - **Mic**: Web Audio high-pass filter + analyser, adaptive noise floor, sensitivity 1–9.
-- **Match data**: `{id, players:[[drive,revés],[drive,revés]], first, order:[i,i], rule:'star'|'golden'|'adv', points:[{w, d (ms), s (bounces, optional)}], notes:[{at, tag}], mark, start, demo?}`.
+- **Match data**: `{id, players:[[drive,revés],[drive,revés]], first, order:[i,i], rule:'star'|'golden'|'adv', points:[{w, d (ms), s (bounces, optional)}], notes:[{at, tag}], mark, start}`.
 - **Storage (localStorage)**: `changeover.v2` current match, `changeover.history` saved matches, `changeover.last` last setup, `changeover.theme`, `changeover.sens`, `changeover.lang`. Old saves with a `golden` flag are migrated by `fix()`. A failed write shows a one-time "Not saved" toast; `navigator.storage.persist()` is requested when a match starts; deleting a saved match needs a second tap within 4 s.
 - **iPhone storage caveat**: Safari tab and Home Screen app have separate storage, and Safari tabs can be wiped after ~7 days unused → owner should always use the Home Screen icon. The only copy is on the phone.
 
