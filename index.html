@@ -409,7 +409,7 @@ const demoHistory=()=>[[5,'Gio','Nico',2],[12,'Diego','Pablo',6],[21,'Sara','Ale
 // ── state + storage ──
 const $=id=>document.getElementById(id);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)'), touch=matchMedia('(hover: none)');
-const store={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const store={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){if(!store.warned){store.warned=true;toast('Not saved — phone storage is full or blocked')}}}};
 const fix=m=>m&&Array.isArray(m.points)&&Array.isArray(m.players)?{rule:m.golden===false?'adv':'golden',notes:[],start:Date.now(),id:String(Date.now()),...m}:null;   // older saves had a golden flag
 const firstRun=store.get('changeover.history')===null;
 let match=firstRun?demoMatch():fix(store.get('changeover.v2'));
@@ -528,7 +528,11 @@ function openReport(id){
     <div class="row2"><button class="btn danger" id="delBtn">Delete</button><button class="btn" id="repClose">Close</button></div>`;
   $('report').hidden=false;
   $('repClose').onclick=()=>$('report').hidden=true;
-  $('delBtn').onclick=()=>{history=history.filter(h=>h.id!==id);save();$('report').hidden=true;render();toast('Match deleted')};
+  let armed=false;   // delete needs a second tap within 4 s
+  $('delBtn').onclick=e=>{
+    if(!armed){armed=true;e.currentTarget.textContent='Tap again to delete';setTimeout(()=>{armed=false;if($('delBtn'))$('delBtn').textContent='Delete'},4000);return}
+    history=history.filter(h=>h.id!==id);save();$('report').hidden=true;render();toast('Match deleted');
+  };
 }
 
 // ── scoring: award() is the single entry point, ready for other input methods ──
@@ -675,6 +679,7 @@ form.addEventListener('submit',e=>{
     live.best=live.cur=0; screen='board';
   }
   $('setup').hidden=true; audio(); keepAwake(); save(); render();
+  navigator.storage?.persist?.().catch(()=>{});   // ask the browser not to clean up saved matches
   toast(setupMode==='edit'?'Saved — score recomputed':`${match.players[match.first][match.order[match.first]]} serves first · ${RULES[match.rule].n}`);
 });
 

@@ -30,7 +30,8 @@ A padel match app used **mainly on iPhone**, with the phone placed at the court 
   - **Input**: `award(w)` (w = 0 your team, 1 rivals), `actions.undo/end/...`, keyboard handler.
   - **Mic**: Web Audio high-pass filter + analyser, adaptive noise floor, sensitivity 1–9.
 - **Match data**: `{id, players:[[drive,revés],[drive,revés]], first, order:[i,i], rule:'star'|'golden'|'adv', points:[{w, d (ms), s (bounces, optional)}], notes:[{at, tag}], mark, start, demo?}`.
-- **Storage (localStorage)**: `changeover.v2` current match, `changeover.history` saved matches, `changeover.last` last setup, `changeover.theme`, `changeover.sens`. Old saves with a `golden` flag are migrated by `fix()`.
+- **Storage (localStorage)**: `changeover.v2` current match, `changeover.history` saved matches, `changeover.last` last setup, `changeover.theme`, `changeover.sens`. Old saves with a `golden` flag are migrated by `fix()`. A failed write shows a one-time "Not saved" toast; `navigator.storage.persist()` is requested when a match starts; deleting a saved match needs a second tap within 4 s.
+- **iPhone storage caveat**: Safari tab and Home Screen app have separate storage, and Safari tabs can be wiped after ~7 days unused → owner should always use the Home Screen icon. The only copy is on the phone.
 
 ## Hard-won details (don't break these)
 - Serve rotation: team A player → team B player → A partner → B partner. Side: right on even point count, left on odd. Receiver = drive on right, revés on left. Tiebreak: first server 1 point, then 2 each; change ends every 6 points.
@@ -52,7 +53,8 @@ A padel match app used **mainly on iPhone**, with the phone placed at the court 
 2. **Test on the real iPhone** (Safari and "Add to Home Screen"): portrait/landscape, touch, wake lock, microphone permission, bounce detection on a real court (tune sensitivity defaults).
 3. **Offline use (PWA)**: web app manifest, icons, service worker so it works with poor signal at the court. This means moving from one file to a few files — fine for the product.
 4. **Wrist control (agreed plan)**: owner has a **Xiaomi Mi Band 9 + iPhone**. A native band app is not viable (no iPhone install route, Vela interconnect is Android-only), so we use the band's **music controls** via the Media Session API: the page plays a silent loop to become "now playing"; **next track → `award(0)`, previous track → `award(1)`**; **play/pause → undo with confirmation** (1st press sets title "Undo 40–30? Press again", 2nd press within 5 s undoes, else reverts). Track title = compact score, artist = server. Same feature covers earbuds, Apple Watch and ring/button remotes that send media keys. Risks to test on court: iOS dropping "now playing", conflict with the bounce mic, refresh speed of the band title. Optional idea offered: distinct beeps per team/undo.
-5. Later ideas (not agreed yet): export/share match reports, stats across matches (per partner/opponent), super tiebreak option for the third set.
+5. **Backup** (agreed, after the first real on-court test): export all matches to a file (Files / iCloud / email) and import them back.
+6. Later ideas (not agreed yet): export/share match reports, stats across matches (per partner/opponent), super tiebreak option for the third set.
 
 ## How to work in this repo
 - Keep the model logic pure and the code readable; short comments that explain intent.
