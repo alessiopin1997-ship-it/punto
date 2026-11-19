@@ -42,6 +42,7 @@ h2{margin-bottom:12px}h2 small,.eyebrow small{letter-spacing:.04em;text-transfor
 .btn{min-height:44px;padding:9px 14px;border-radius:12px;border:1px solid var(--line);font-weight:700;font-size:14px;display:inline-flex;gap:8px;align-items:center;justify-content:center}
 .cta{width:100%;min-height:56px;padding:16px;border-radius:16px;background:var(--ink);color:var(--bg);font:800 18px var(--font);display:flex;justify-content:center;align-items:center;gap:12px;transition:transform .15s var(--pop)}
 .cta:active,.btn:active{transform:scale(.97)}
+.btn[aria-pressed=true]{background:var(--us);color:var(--on);border-color:var(--us)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px}
 
 /* home: resume, new match, history */
@@ -186,6 +187,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
     <div class="clocks"><span><span data-it="Partita">Match</span><b id="ckM"></b></span><span><span data-it="Set">Set</span><b id="ckS"></b></span><span><span data-it="Game">Game</span><b id="ckG"></b></span><span><span data-it="Scambio">Rally</span><b id="ckR">–</b></span></div>
     <div class="acts">
       <button class="btn" id="undoBtn" data-it="Annulla &lt;kbd&gt;U&lt;/kbd&gt;">Undo <kbd>U</kbd></button>
+      <button class="btn" id="wristBtn" aria-pressed="false" data-it="Polso &lt;kbd&gt;W&lt;/kbd&gt;">Wrist <kbd>W</kbd></button>
       <button class="btn" id="coachBtn" data-it="Coach &lt;kbd&gt;C&lt;/kbd&gt;">Coach <kbd>C</kbd></button>
       <button class="btn" id="setupBtn" data-it="Giocatori &lt;kbd&gt;P&lt;/kbd&gt;">Players <kbd>P</kbd></button>
       <button class="btn" id="endBtn" data-it="Fine &lt;kbd&gt;E&lt;/kbd&gt;">End <kbd>E</kbd></button>
@@ -264,6 +266,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
       <li data-it="Dopo ogni punto, tocca la metà della squadra che l’ha vinto. Bip acuto: punto alla tua squadra; bip grave: agli avversari; bip lungo e profondo: punto annullato. Annulla è sempre a un tocco.">After each point, tap the half of the team that won it. A high beep means your team got the point, a low beep the rivals, a long deep beep an undo. Undo is always one tap away.</li>
       <li data-it="Dopo ogni game una schermata mostra chi serve a chi. Tocca &lt;b&gt;Coach&lt;/b&gt; quando vuoi un consiglio e, se vuoi, segnare cosa vi ha fatto più male.">After every game a screen shows who serves to whom. Tap <b>Coach</b> whenever you want one focus tip and an optional "what hurt" tag.</li>
       <li data-it="Le partite finite si salvano da sole; premi &lt;b&gt;Fine&lt;/b&gt; per salvarne una non finita quando scade l’ora del campo.">Finished matches are saved automatically; press <b>End</b> to save an unfinished one when your court time runs out.</li>
+      <li data-it="&lt;b&gt;Controllo da polso&lt;/b&gt;: tocca &lt;b&gt;Polso&lt;/b&gt;, poi usa i tasti musica del band, dell’orologio o degli auricolari — avanti = punto vostro, indietro = avversari, play/pausa due volte = annulla. Il punteggio appare come titolo della canzone."><b>Wrist control</b>: tap <b>Wrist</b>, then use the music buttons on your band, watch or earbuds — next = point to your team, previous = rivals, play/pause twice = undo. The score shows as the song title.</li>
     </ol>
     <div class="keys">
       <span><kbd>←</kbd><kbd>1</kbd></span><span data-it="Punto alla tua squadra">Point to your team</span>
@@ -276,6 +279,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
       <span><kbd>E</kbd></span><span data-it="Chiudi e salva la partita">End and save the match</span>
       <span><kbd>H</kbd></span><span data-it="Home e storico">Home and history</span>
       <span><kbd>P</kbd></span><span data-it="Giocatori, posizioni e regole">Players, positions and rules</span>
+      <span><kbd>W</kbd></span><span data-it="Controllo da polso on/off">Wrist control on/off</span>
       <span><kbd>M</kbd></span><span data-it="Ascolto rimbalzi on/off">Listen for ball bounces on/off</span>
       <span><kbd>[</kbd><kbd>]</kbd></span><span data-it="Sensibilità rimbalzi giù / su">Bounce sensitivity down / up</span>
       <span><kbd>F</kbd></span><span data-it="Schermo intero">Full screen</span>
@@ -444,7 +448,7 @@ function render(){
   view=match&&replay(match);
   $('home').hidden=screen!=='home'; $('board').hidden=screen!=='board'; $('stats').hidden=screen!=='stats';
   $('tabs').hidden=!match; $('tabBoard').setAttribute('aria-pressed',screen==='board'); $('tabStats').setAttribute('aria-pressed',screen==='stats');
-  $('micBtn').setAttribute('aria-pressed',!!mic);
+  $('micBtn').setAttribute('aria-pressed',!!mic); $('wristBtn').setAttribute('aria-pressed',!!wrist&&!wrist.paused); updateWrist();
   $('awakeBtn').textContent=lock?tr('Screen stays on','Schermo sempre acceso'):'wakeLock' in navigator?tr('Keep screen on','Tieni lo schermo acceso'):tr('Keep screen on in settings','Schermo acceso: vedi impostazioni');
   $('awakeBtn').classList.toggle('on',!!lock);
   if(screen==='home')renderHome(); else if(screen==='board')renderBoard(); else renderStats();
@@ -611,6 +615,43 @@ function tick(now){
   if(!left){beep(990,.4);closeCoach();toast(tr('Time — back on court','Tempo — tutti in campo'))}
 }
 
+// ── wrist control: any "music remote" (Mi Band, earbuds, watch, media button) scores via the Media Session API.
+// A silent loop makes Punto the phone's now-playing app; next = your point, previous = rivals' point,
+// play/pause twice within 5 s = undo. The track title shows the score on the band.
+let wrist=null, undoArm=0;
+function silentWav(sec=10,rate=8000){   // 8-bit mono PCM, value 128 = silence
+  const n=sec*rate, b=new ArrayBuffer(44+n), v=new DataView(b), w=(o,s)=>[...s].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));
+  w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,rate,true);v.setUint32(28,rate,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);
+  new Uint8Array(b,44).fill(128); return URL.createObjectURL(new Blob([b],{type:'audio/wav'}));
+}
+function toggleWrist(){
+  const ms=navigator.mediaSession, set=(a,f)=>{try{ms.setActionHandler(a,f)}catch(e){}};   // not every browser knows every action
+  if(wrist){wrist.pause();wrist=null;['nexttrack','previoustrack','play','pause'].forEach(a=>set(a,null));ms.metadata=null;render();return toast(tr('Wrist control off','Controllo da polso spento'))}
+  if(!ms||!window.MediaMetadata)return toast(tr('This browser has no music controls — wrist control is not available','Questo browser non ha i controlli musicali — controllo da polso non disponibile'));
+  wrist=new Audio(silentWav()); wrist.loop=true; wrist.onplay=wrist.onpause=()=>render();
+  wrist.play().then(()=>toast(tr('Wrist on: next = your point, previous = rivals, play/pause twice = undo','Polso attivo: avanti = punto vostro, indietro = avversari, play/pausa due volte = annulla')))
+    .catch(()=>{wrist=null;render();toast(tr('Could not start wrist control — tap again','Impossibile avviare il controllo da polso — tocca di nuovo'))});
+  const point=w=>()=>{undoArm=0;if(coachOpen)closeCoach();if(screen==='home'&&match)go('board');award(w)};
+  set('nexttrack',point(0)); set('previoustrack',point(1)); set('play',wristUndo); set('pause',wristUndo);
+  set('seekforward',null); set('seekbackward',null);   // so the phone shows next/previous, not ±10 s
+  render();
+}
+function wristUndo(){
+  navigator.mediaSession.playbackState='playing'; wrist?.play().catch(()=>{});   // stay "playing" so the band keeps its buttons
+  if(Date.now()-undoArm<5000){undoArm=0;actions.undo();return}
+  undoArm=Date.now(); updateWrist(); setTimeout(updateWrist,5100);
+}
+function updateWrist(){
+  if(!wrist)return;
+  const s=view; let title, artist='Punto';
+  if(Date.now()-undoArm<5000)title=tr('Undo last point? Press again','Annullo l’ultimo punto? Premi ancora');
+  else if(!match)title=tr('No match','Nessuna partita');
+  else if(s.winner!==null)title=`${s.winner?tr('Lost','Persa'):tr('Won','Vinta')} ${scoreLine(s)}`;
+  else{const [st,sp]=s.next; title=`${pointLabel(s,0)}–${pointLabel(s,1)} · ${s.games.join('–')}${s.setLog.length?' · '+s.sets.join('–'):''}`; artist=tr(`${match.players[st][sp]} serves`,`Serve ${match.players[st][sp]}`)}
+  navigator.mediaSession.metadata=new MediaMetadata({title,artist,album:'Punto'});
+}
+
 // ── listening: bounces are short loud transients above a slowly adapting noise floor ──
 async function toggleMic(){
   if(mic){mic.stream.getTracks().forEach(t=>t.stop());mic=null;$('lvl').style.width='0';render();return toast(tr('Stopped listening','Ascolto fermato'))}
@@ -742,10 +783,10 @@ $('homeBtn').onclick=()=>go('home'); $('tabBoard').onclick=()=>go('board'); $('t
 $('hlist').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b)openReport(b.dataset.id)});
 $('backBtn').onclick=closeCoach;
 $('micBtn').onclick=toggleMic; $('themeBtn').onclick=actions.theme; $('helpBtn').onclick=()=>help(true); $('helpClose').onclick=()=>help(false);
-$('awakeBtn').onclick=keepAwake; $('langBtn').onclick=actions.lang;
+$('awakeBtn').onclick=keepAwake; $('wristBtn').onclick=toggleWrist; $('langBtn').onclick=actions.lang;
 $('sensDown').onclick=()=>actions.sens(-1); $('sensUp').onclick=()=>actions.sens(1);
 ['help','setup','report'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target.id===id)$(id).hidden=true}));
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keepAwake()});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){keepAwake();if(wrist?.paused)wrist.play().catch(()=>{})}});
 addEventListener('pointerdown',()=>{audio();keepAwake()},{once:true});
 
 addEventListener('keydown',e=>{
@@ -763,7 +804,7 @@ addEventListener('keydown',e=>{
     if(k==='ArrowRight'||k==='2')return act(()=>award(1));
     if(lk==='c')return act(coachNow);
   }
-  const map={u:actions.undo,v:()=>go(screen==='board'?'stats':'board'),h:()=>go('home'),n:()=>openSetup('new'),e:actions.end,p:()=>match&&openSetup('edit'),m:toggleMic,f:actions.full,t:actions.theme,l:actions.lang,'[':()=>actions.sens(-1),']':()=>actions.sens(1)}[lk];
+  const map={u:actions.undo,v:()=>go(screen==='board'?'stats':'board'),h:()=>go('home'),n:()=>openSetup('new'),e:actions.end,p:()=>match&&openSetup('edit'),m:toggleMic,f:actions.full,t:actions.theme,l:actions.lang,w:toggleWrist,'[':()=>actions.sens(-1),']':()=>actions.sens(1)}[lk];
   if(map)act(map);
 });
 
