@@ -162,19 +162,20 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
 <body>
 <header class="top">
   <button class="brand" id="homeBtn" aria-label="Home"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="2" width="24" height="24" rx="7" fill="var(--us)"/><path d="M8 11h12l-3-3M20 17H8l3 3" fill="none" stroke="var(--on)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Punto</span></button>
-  <div class="tabs" id="tabs"><button id="tabBoard">Score</button><button id="tabStats">Insights</button></div>
+  <div class="tabs" id="tabs"><button id="tabBoard" data-it="Punti">Score</button><button id="tabStats" data-it="Analisi">Insights</button></div>
   <button class="pill" id="awakeBtn" title="Keep the screen on during the match"></button>
-  <button class="icon" id="micBtn" title="Listen for ball bounces (M)" aria-label="Microphone" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 7.5a5 5 0 0 0 10 0M8 12.5V15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
-  <button class="icon" id="themeBtn" title="Theme (T)" aria-label="Toggle theme"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
-  <button class="icon" id="helpBtn" title="Help (?)" aria-label="Help">?</button>
+  <button class="icon" id="micBtn" title="Listen for ball bounces (M)" aria-label="Microphone" data-it-aria="Microfono" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 7.5a5 5 0 0 0 10 0M8 12.5V15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+  <button class="icon" id="themeBtn" title="Theme (T)" aria-label="Toggle theme" data-it-aria="Cambia tema"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+  <button class="icon" id="helpBtn" title="Help (?)" aria-label="Help" data-it-aria="Aiuto">?</button>
 </header>
 
 <main id="home">
-  <h1 class="hello">Ready for <span>padel</span>?</h1>
+  <h1 class="hello" data-it="Pronto per il &lt;span&gt;padel&lt;/span&gt;?">Ready for <span>padel</span>?</h1>
   <section class="card resume" id="resume"></section>
-  <button class="cta" id="newBtn">New match <kbd>N</kbd></button>
-  <section class="card"><h2>Match history <small id="hCount"></small></h2><div class="hlist" id="hlist"></div><p class="note" id="demoNote"></p></section>
+  <button class="cta" id="newBtn" data-it="Nuova partita &lt;kbd&gt;N&lt;/kbd&gt;">New match <kbd>N</kbd></button>
+  <section class="card"><h2><span data-it="Storico partite">Match history</span> <small id="hCount"></small></h2><div class="hlist" id="hlist"></div><p class="note" id="demoNote"></p></section>
   <p class="note" id="installTip"></p>
+  <div><button class="btn" id="langBtn"></button></div>
 </main>
 
 <main id="board" hidden>
@@ -182,40 +183,40 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
   <button class="team" id="team1" aria-label="Point to the rivals"></button>
   <div class="bar">
     <p class="status" id="status" aria-live="polite"></p>
-    <div class="clocks"><span>Match<b id="ckM"></b></span><span>Set<b id="ckS"></b></span><span>Game<b id="ckG"></b></span><span>Rally<b id="ckR">–</b></span></div>
+    <div class="clocks"><span><span data-it="Partita">Match</span><b id="ckM"></b></span><span><span data-it="Set">Set</span><b id="ckS"></b></span><span><span data-it="Game">Game</span><b id="ckG"></b></span><span><span data-it="Scambio">Rally</span><b id="ckR">–</b></span></div>
     <div class="acts">
-      <button class="btn" id="undoBtn">Undo <kbd>U</kbd></button>
-      <button class="btn" id="coachBtn">Coach <kbd>C</kbd></button>
-      <button class="btn" id="setupBtn">Players <kbd>P</kbd></button>
-      <button class="btn" id="endBtn">End <kbd>E</kbd></button>
-      <button class="btn" id="fsBtn">Full screen <kbd>F</kbd></button>
+      <button class="btn" id="undoBtn" data-it="Annulla &lt;kbd&gt;U&lt;/kbd&gt;">Undo <kbd>U</kbd></button>
+      <button class="btn" id="coachBtn" data-it="Coach &lt;kbd&gt;C&lt;/kbd&gt;">Coach <kbd>C</kbd></button>
+      <button class="btn" id="setupBtn" data-it="Giocatori &lt;kbd&gt;P&lt;/kbd&gt;">Players <kbd>P</kbd></button>
+      <button class="btn" id="endBtn" data-it="Fine &lt;kbd&gt;E&lt;/kbd&gt;">End <kbd>E</kbd></button>
+      <button class="btn" id="fsBtn" data-it="Schermo intero &lt;kbd&gt;F&lt;/kbd&gt;">Full screen <kbd>F</kbd></button>
     </div>
   </div>
 </main>
 
 <main id="stats" hidden>
-  <section class="card"><h2>Focus for the next games</h2><p class="cue" id="cue"></p><p class="tip" id="tip"></p><div class="chips" id="chips"></div></section>
-  <section class="card"><h2>Match pulse <small>after every point</small></h2><div class="pv"><b id="prob"></b><span>chance your team wins</span></div><svg class="spark" id="spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true"></svg></section>
+  <section class="card"><h2 data-it="Obiettivo per i prossimi game">Focus for the next games</h2><p class="cue" id="cue"></p><p class="tip" id="tip"></p><div class="chips" id="chips"></div></section>
+  <section class="card"><h2 data-it="Andamento &lt;small&gt;dopo ogni punto&lt;/small&gt;">Match pulse <small>after every point</small></h2><div class="pv"><b id="prob"></b><span data-it="probabilità che vinca la tua squadra">chance your team wins</span></div><svg class="spark" id="spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true"></svg></section>
   <section class="card">
-    <h2>Rally radar <small id="radarState"></small></h2>
+    <h2><span data-it="Radar scambi">Rally radar</span> <small id="radarState"></small></h2>
     <div class="radar"><div class="dial"><i class="ring" id="ring"></i><b id="rallyNow">0</b><span id="rallyLbl">bounces</span></div><div class="rstats" id="rStats"></div></div>
     <svg class="strip" id="strip" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true"></svg>
     <div class="level"><span>Mic</span><div class="meter"><i id="lvl"></i></div>
-      <div class="sens"><button id="sensDown" aria-label="Less sensitive">−</button><span id="sensV"></span><button id="sensUp" aria-label="More sensitive">+</button></div></div>
+      <div class="sens"><button id="sensDown" aria-label="Less sensitive" data-it-aria="Meno sensibile">−</button><span id="sensV"></span><button id="sensUp" aria-label="More sensitive" data-it-aria="Più sensibile">+</button></div></div>
   </section>
-  <section class="card"><h2>Time on court</h2><div class="kv" id="times"></div><p class="sub" id="setTimes"></p></section>
-  <section class="card"><h2>Players <small>serve holds · return points won</small></h2><table id="players"></table></section>
+  <section class="card"><h2 data-it="Tempo in campo">Time on court</h2><div class="kv" id="times"></div><p class="sub" id="setTimes"></p></section>
+  <section class="card"><h2 data-it="Giocatori &lt;small&gt;servizi tenuti · punti vinti in risposta&lt;/small&gt;">Players <small>serve holds · return points won</small></h2><table id="players"></table></section>
 </main>
 
 <div class="screen" id="coach" hidden>
   <div class="inner coach">
-    <div class="timer" id="timer"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="52"/><circle class="arc" id="arc" cx="60" cy="60" r="52"/></svg><b id="tVal"></b><span>seconds</span></div>
+    <div class="timer" id="timer"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="52"/><circle class="arc" id="arc" cx="60" cy="60" r="52"/></svg><b id="tVal"></b><span data-it="secondi">seconds</span></div>
     <div class="inner">
       <p class="eyebrow" id="cScore"></p>
       <p class="big" id="cCue"></p>
       <p class="tip" id="cTip"></p>
       <div class="chips" id="cChips"></div>
-      <p class="eyebrow" id="tagLbl">What hurt you most? <small>optional — sharpens the advice</small></p>
+      <p class="eyebrow" id="tagLbl" data-it="Cosa vi ha fatto più male? &lt;small&gt;facoltativo — rende il consiglio più preciso&lt;/small&gt;">What hurt you most? <small>optional — sharpens the advice</small></p>
       <div class="tags" id="tags"></div>
       <button class="cta" id="backBtn">Back on court <kbd>Enter</kbd></button>
     </div>
@@ -223,88 +224,100 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
 </div>
 
 <div class="screen serve" id="serve" role="status" hidden>
-  <div class="inner"><p class="eyebrow" id="sHead"></p><p class="big" id="sWho"></p><p class="tip" id="sSub"></p><p class="note">Tap anywhere to continue</p></div>
+  <div class="inner"><p class="eyebrow" id="sHead"></p><p class="big" id="sWho"></p><p class="tip" id="sSub"></p><p class="note" data-it="Tocca per continuare">Tap anywhere to continue</p></div>
 </div>
 
 <div class="overlay" id="setup" hidden>
   <form class="sheet" id="setupForm" aria-labelledby="setupTitle">
     <h3 id="setupTitle"></h3>
-    <p>Drive plays the right side and receives the first point of every game; revés plays the left.</p>
-    <fieldset><legend>Your team</legend>
-      <label>Drive (right)<input type="text" name="n00" maxlength="14" autocomplete="off" placeholder="You"></label>
-      <label>Revés (left)<input type="text" name="n01" maxlength="14" autocomplete="off" placeholder="Partner"></label>
-      <label class="full">Serves first<select name="o0"><option value="0">Drive player</option><option value="1">Revés player</option></select></label>
+    <p data-it="Il dritto gioca a destra e riceve il primo punto di ogni game; il rovescio gioca a sinistra.">Drive plays the right side and receives the first point of every game; revés plays the left.</p>
+    <fieldset><legend data-it="La tua squadra">Your team</legend>
+      <label><span data-it="Dritto (destra)">Drive (right)</span><input type="text" name="n00" maxlength="14" autocomplete="off" placeholder="You" data-it-ph="Tu"></label>
+      <label><span data-it="Rovescio (sinistra)">Revés (left)</span><input type="text" name="n01" maxlength="14" autocomplete="off" placeholder="Partner" data-it-ph="Compagno"></label>
+      <label class="full"><span data-it="Serve per primo">Serves first</span><select name="o0"><option value="0" data-it="Giocatore di dritto">Drive player</option><option value="1" data-it="Giocatore di rovescio">Revés player</option></select></label>
     </fieldset>
-    <fieldset><legend>Rivals</legend>
-      <label>Drive (right)<input type="text" name="n10" maxlength="14" autocomplete="off" placeholder="Rival 1"></label>
-      <label>Revés (left)<input type="text" name="n11" maxlength="14" autocomplete="off" placeholder="Rival 2"></label>
-      <label class="full">Serves first<select name="o1"><option value="0">Drive player</option><option value="1">Revés player</option></select></label>
+    <fieldset><legend data-it="Avversari">Rivals</legend>
+      <label><span data-it="Dritto (destra)">Drive (right)</span><input type="text" name="n10" maxlength="14" autocomplete="off" placeholder="Rival 1" data-it-ph="Avversario 1"></label>
+      <label><span data-it="Rovescio (sinistra)">Revés (left)</span><input type="text" name="n11" maxlength="14" autocomplete="off" placeholder="Rival 2" data-it-ph="Avversario 2"></label>
+      <label class="full"><span data-it="Serve per primo">Serves first</span><select name="o1"><option value="0" data-it="Giocatore di dritto">Drive player</option><option value="1" data-it="Giocatore di rovescio">Revés player</option></select></label>
     </fieldset>
-    <fieldset><legend>Rules</legend>
-      <label class="full">First serve<select name="first"><option value="0">Your team</option><option value="1">Rivals</option></select></label>
-      <div class="seg" role="radiogroup" aria-label="Deuce rule">
-        <label><input type="radio" name="rule" value="star"><span>Star point<small>2 advantages, then 1 decider</small></span></label>
-        <label><input type="radio" name="rule" value="golden"><span>Golden point<small>1 decider at 40–40</small></span></label>
-        <label><input type="radio" name="rule" value="adv"><span>Advantage<small>classic deuce</small></span></label>
+    <fieldset><legend data-it="Regole">Rules</legend>
+      <label class="full"><span data-it="Primo servizio">First serve</span><select name="first"><option value="0" data-it="La tua squadra">Your team</option><option value="1" data-it="Avversari">Rivals</option></select></label>
+      <div class="seg" role="radiogroup" aria-label="Deuce rule" data-it-aria="Regola della parità">
+        <label><input type="radio" name="rule" value="star"><span data-it="Star point&lt;small&gt;2 vantaggi, poi punto decisivo&lt;/small&gt;">Star point<small>2 advantages, then 1 decider</small></span></label>
+        <label><input type="radio" name="rule" value="golden"><span data-it="Golden point&lt;small&gt;punto decisivo sul 40–40&lt;/small&gt;">Golden point<small>1 decider at 40–40</small></span></label>
+        <label><input type="radio" name="rule" value="adv"><span data-it="Vantaggi&lt;small&gt;parità classica&lt;/small&gt;">Advantage<small>classic deuce</small></span></label>
       </div>
     </fieldset>
-    <div class="row2"><button class="btn" type="button" id="setupCancel">Cancel</button><button class="btn cta" type="submit" id="setupGo"></button></div>
+    <div class="row2"><button class="btn" type="button" id="setupCancel" data-it="Annulla">Cancel</button><button class="btn cta" type="submit" id="setupGo"></button></div>
   </form>
 </div>
 
-<div class="overlay" id="report" hidden><div class="sheet" id="reportBody" role="dialog" aria-modal="true" aria-label="Match report"></div></div>
+<div class="overlay" id="report" hidden><div class="sheet" id="reportBody" role="dialog" aria-modal="true" aria-label="Match report" data-it-aria="Resoconto partita"></div></div>
 
 <div class="overlay" id="help" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
     <h3 id="helpTitle">Punto</h3>
-    <p>A padel scoreboard you stand facing the court, with a coach for every change of ends. It keeps the score with star point, golden point or advantage, shows who serves from which side and who receives, times every point, game and set, listens for ball bounces, and saves every match to your history.</p>
+    <p data-it="Un segnapunti da padel da mettere a bordo campo, con un coach quando lo chiedi. Tiene il punteggio con star point, golden point o vantaggi, mostra chi serve, da che lato e chi riceve, cronometra ogni punto, game e set, ascolta i rimbalzi della palla e salva ogni partita nello storico.">A padel scoreboard you stand facing the court, with a coach on demand. It keeps the score with star point, golden point or advantage, shows who serves from which side and who receives, times every point, game and set, listens for ball bounces, and saves every match to your history.</p>
     <ol>
-      <li><b>New match</b>: enter names, positions (drive / revés), serve order and the deuce rule.</li>
-      <li>After each point, tap the half of the team that won it. A high beep means your team got the point, a low beep the rivals, a long deep beep an undo. Undo is always one tap away.</li>
-      <li>After every game a screen shows who serves to whom. Tap <b>Coach</b> whenever you want one focus tip and an optional "what hurt" tag.</li>
-      <li>Finished matches are saved automatically; press <b>End</b> to save an unfinished one when your court time runs out.</li>
+      <li data-it="&lt;b&gt;Nuova partita&lt;/b&gt;: inserisci nomi, posizioni (dritto / rovescio), ordine di servizio e regola della parità."><b>New match</b>: enter names, positions (drive / revés), serve order and the deuce rule.</li>
+      <li data-it="Dopo ogni punto, tocca la metà della squadra che l’ha vinto. Bip acuto: punto alla tua squadra; bip grave: agli avversari; bip lungo e profondo: punto annullato. Annulla è sempre a un tocco.">After each point, tap the half of the team that won it. A high beep means your team got the point, a low beep the rivals, a long deep beep an undo. Undo is always one tap away.</li>
+      <li data-it="Dopo ogni game una schermata mostra chi serve a chi. Tocca &lt;b&gt;Coach&lt;/b&gt; quando vuoi un consiglio e, se vuoi, segnare cosa vi ha fatto più male.">After every game a screen shows who serves to whom. Tap <b>Coach</b> whenever you want one focus tip and an optional "what hurt" tag.</li>
+      <li data-it="Le partite finite si salvano da sole; premi &lt;b&gt;Fine&lt;/b&gt; per salvarne una non finita quando scade l’ora del campo.">Finished matches are saved automatically; press <b>End</b> to save an unfinished one when your court time runs out.</li>
     </ol>
     <div class="keys">
-      <span><kbd>←</kbd><kbd>1</kbd></span><span>Point to your team</span>
-      <span><kbd>→</kbd><kbd>2</kbd></span><span>Point to the rivals</span>
-      <span><kbd>U</kbd></span><span>Undo last point</span>
-      <span><kbd>V</kbd></span><span>Switch score / insights</span>
-      <span><kbd>C</kbd></span><span>Open the coach now</span>
-      <span><kbd>Enter</kbd><kbd>1</kbd>–<kbd>6</kbd></span><span>Coach: back on court / what hurt most</span>
-      <span><kbd>N</kbd></span><span>New match</span>
-      <span><kbd>E</kbd></span><span>End and save the match</span>
-      <span><kbd>H</kbd></span><span>Home and history</span>
-      <span><kbd>P</kbd></span><span>Players, positions and rules</span>
-      <span><kbd>M</kbd></span><span>Listen for ball bounces on/off</span>
-      <span><kbd>[</kbd><kbd>]</kbd></span><span>Bounce sensitivity down / up</span>
-      <span><kbd>F</kbd></span><span>Full screen</span>
-      <span><kbd>T</kbd></span><span>Dark / light theme</span>
-      <span><kbd>?</kbd><kbd>Esc</kbd></span><span>Open / close this help</span>
+      <span><kbd>←</kbd><kbd>1</kbd></span><span data-it="Punto alla tua squadra">Point to your team</span>
+      <span><kbd>→</kbd><kbd>2</kbd></span><span data-it="Punto agli avversari">Point to the rivals</span>
+      <span><kbd>U</kbd></span><span data-it="Annulla l’ultimo punto">Undo last point</span>
+      <span><kbd>V</kbd></span><span data-it="Passa da punti ad analisi">Switch score / insights</span>
+      <span><kbd>C</kbd></span><span data-it="Apri il coach">Open the coach now</span>
+      <span><kbd>Enter</kbd><kbd>1</kbd>–<kbd>6</kbd></span><span data-it="Coach: in campo / cosa ha fatto più male">Coach: back on court / what hurt most</span>
+      <span><kbd>N</kbd></span><span data-it="Nuova partita">New match</span>
+      <span><kbd>E</kbd></span><span data-it="Chiudi e salva la partita">End and save the match</span>
+      <span><kbd>H</kbd></span><span data-it="Home e storico">Home and history</span>
+      <span><kbd>P</kbd></span><span data-it="Giocatori, posizioni e regole">Players, positions and rules</span>
+      <span><kbd>M</kbd></span><span data-it="Ascolto rimbalzi on/off">Listen for ball bounces on/off</span>
+      <span><kbd>[</kbd><kbd>]</kbd></span><span data-it="Sensibilità rimbalzi giù / su">Bounce sensitivity down / up</span>
+      <span><kbd>F</kbd></span><span data-it="Schermo intero">Full screen</span>
+      <span><kbd>L</kbd></span><span data-it="Lingua: inglese / italiano">Language: English / Italian</span>
+      <span><kbd>T</kbd></span><span data-it="Tema scuro / chiaro">Dark / light theme</span>
+      <span><kbd>?</kbd><kbd>Esc</kbd></span><span data-it="Apri / chiudi questo aiuto">Open / close this help</span>
     </div>
-    <p style="margin-top:14px">Everything stays on this device: no account, no network, no audio saved.</p>
-    <div class="row2"><button class="btn" id="helpClose">Close</button></div>
+    <p style="margin-top:14px" data-it="Tutto resta su questo dispositivo: nessun account, nessuna rete, nessun audio salvato.">Everything stays on this device: no account, no network, no audio saved.</p>
+    <div class="row2"><button class="btn" id="helpClose" data-it="Chiudi">Close</button></div>
   </div>
 </div>
 <div id="toast" role="status"></div>
 
 <script>
 'use strict';
+// language: saved choice, else the phone's language
+let lang=(()=>{try{return JSON.parse(localStorage.getItem('changeover.lang'))}catch(e){}})()||(/^it/i.test(navigator.language)?'it':'en');
+const tr=(en,it)=>lang==='it'?it:en;
 // ── model: a match is the list of points; score, serve order and timings are all derived ──
-const PTS=['0','15','30','40'], POS=['drive','revés'];
-const RULES={star:{n:'Star point',d:5},golden:{n:'Golden point',d:3},adv:{n:'Advantage',d:99}};   // d: tied points at which one point decides
+const PTS=['0','15','30','40'], pos=p=>tr(['drive','revés'][p],['dritto','rovescio'][p]);
+const RULES={star:{n:'Star point',it:'Star point',d:5},golden:{n:'Golden point',it:'Golden point',d:3},adv:{n:'Advantage',it:'Vantaggi',d:99}};   // d: tied points at which one point decides
 const TAGS=[
-  {k:'lobs',  n:'Their lobs',    cue:'Beat the lob',          tip:'Stand one step further from the net and take the bandeja early — never let it bounce'},
-  {k:'net',   n:'Their net play',cue:'Get them off the net',  tip:'Lob more, deep to the backhand corner, then take the net together'},
-  {k:'errors',n:'Our errors',    cue:'Bigger margins',        tip:'Aim the middle at 70% pace — make them hit one more ball'},
-  {k:'serve', n:'Our serve',     cue:'First serve in',        tip:'80% pace to the glass or the body, then straight to the net'},
-  {k:'return',n:'Our return',    cue:'Return low, crosscourt',tip:"Block it at the server's feet and move up behind the ball"},
-  {k:'legs',  n:'Tired legs',    cue:'Shorter points',        tip:'Attack the first short ball and use the full break to drink and breathe'},
+  {k:'lobs',  n:'Their lobs',    cue:'Beat the lob',          tip:'Stand one step further from the net and take the bandeja early — never let it bounce',
+   it:{n:'I loro pallonetti',cue:'Batti il pallonetto',tip:'Un passo più lontano dalla rete e bandeja anticipata — non farla mai rimbalzare'}},
+  {k:'net',   n:'Their net play',cue:'Get them off the net',  tip:'Lob more, deep to the backhand corner, then take the net together',
+   it:{n:'Il loro gioco a rete',cue:'Toglili dalla rete',tip:'Più pallonetti, profondi sull’angolo del rovescio, poi a rete insieme'}},
+  {k:'errors',n:'Our errors',    cue:'Bigger margins',        tip:'Aim the middle at 70% pace — make them hit one more ball',
+   it:{n:'I nostri errori',cue:'Più margine',tip:'Mira al centro al 70% — falli giocare una palla in più'}},
+  {k:'serve', n:'Our serve',     cue:'First serve in',        tip:'80% pace to the glass or the body, then straight to the net',
+   it:{n:'Il nostro servizio',cue:'Prima di servizio dentro',tip:'All’80% sul vetro o sul corpo, poi subito a rete'}},
+  {k:'return',n:'Our return',    cue:'Return low, crosscourt',tip:"Block it at the server's feet and move up behind the ball",
+   it:{n:'La nostra risposta',cue:'Risposta bassa, incrociata',tip:'Bloccala ai piedi di chi serve e sali dietro la palla'}},
+  {k:'legs',  n:'Tired legs',    cue:'Shorter points',        tip:'Attack the first short ball and use the full break to drink and breathe',
+   it:{n:'Gambe stanche',cue:'Punti più corti',tip:'Attacca la prima palla corta e usa tutta la pausa per bere e respirare'}},
 ];
+const tg=(t,f)=>lang==='it'?t.it[f]:t[f];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>`&#${c.charCodeAt(0)};`);
 const teamName=(m,t)=>m.players[t].join(' & ');
 const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
 const pair=()=>[[0,0],[0,0]];
 const decider=m=>(RULES[m.rule]||RULES.star).d;
+const ruleName=r=>tr(RULES[r].n,RULES[r].it);
 // serve order across the four players: team A, team B, A's partner, B's partner
 const rotation=m=>{const a=m.first,b=1-a;return[[a,m.order[a]],[b,m.order[b]],[a,1-m.order[a]],[b,1-m.order[b]]]};
 
@@ -374,21 +387,23 @@ function coach(m,s){
   const N=m.players, g=s.gameLog, last=m.notes.at(-1), tag=last&&last.at===m.points.length&&TAGS.find(t=>t.k===last.tag), ri=rallyInsight(m);
   const [nt,np]=s.next, nsv=s.sv[nt][np];
   let cue;
-  if(s.winner!==null)cue=s.winner?{t:'Match lost — keep one lesson',tip:'Note the pattern that cost the most games and train it this week'}:{t:'Match won',tip:'Remember what worked today — it is your plan for the next one'};
-  else if(s.tb)cue={t:'Tiebreak: no free points',tip:'First serve in, lob to the backhand corner, take the net together'};
-  else if(tag)cue={t:tag.cue,tip:tag.tip};
-  else if(g.length>=3&&g.slice(-3).every(x=>x.w))cue={t:'Stop the slide',tip:'Slow the tempo: high lobs and balls through the middle until they miss'};
-  else if(!nt&&nsv[0]>=2&&nsv[1]*2<nsv[0])cue={t:`Protect ${N[0][np]}'s serve`,tip:`Held ${nsv[1]} of ${nsv[0]} — first serve in at 80% pace, and ${N[0][1-np]} stays close to the net to poach`};
-  else if(nt&&nsv[0]>=2&&nsv[1]*2<nsv[0])cue={t:`Attack ${N[1][np]}'s serve`,tip:`They held only ${nsv[1]} of ${nsv[0]} on this serve — step in on the second serve and lob the net player`};
-  else if(ri)cue=ri.short>ri.long?{t:'Keep the points short',tip:`You win ${ri.short}% of points under ~${ri.thr} bounces, ${ri.long}% in longer rallies — attack the first short ball`}
-                                 :{t:'Make the points long',tip:`You win ${ri.long}% of long rallies, ${ri.short}% of short ones — high lobs, play the middle, let them miss`};
-  else if(s.dp[0]>=3&&s.dp[1]*5<s.dp[0]*2)cue={t:'Win the deciding points',tip:`${s.dp[1]} of ${s.dp[0]} won — on the decider, serve to the body and play the percentage lob`};
-  else if(g.length>=2&&!g.at(-1).w&&!g.at(-2).w)cue={t:'Momentum is yours',tip:'Change nothing: same positions, same patterns, same pace'};
-  else cue=nt?{t:'Win the return game',tip:'Low crosscourt returns, then move up behind the ball'}:{t:`${N[0][np]}: hold this game`,tip:'First serve in, follow it to the net, volley deep down the middle'};
-  const chips=[`Win chance ${Math.round(winProb(s,m)*100)}%`,`Held ${held(s,0)}/${served(s,0)}`,`Broke ${served(s,1)-held(s,1)}/${served(s,1)}`];
-  if(s.dp[0])chips.push(`${RULES[m.rule].n.split(' ')[0]} points ${s.dp[1]}/${s.dp[0]}`);
+  if(s.winner!==null)cue=s.winner?{t:tr('Match lost — keep one lesson','Partita persa — tieni una lezione'),tip:tr('Note the pattern that cost the most games and train it this week','Annota lo schema che vi è costato più game e allenalo questa settimana')}
+                                :{t:tr('Match won','Partita vinta'),tip:tr('Remember what worked today — it is your plan for the next one','Ricorda cosa ha funzionato oggi: è il piano per la prossima')};
+  else if(s.tb)cue={t:tr('Tiebreak: no free points','Tiebreak: nessun punto regalato'),tip:tr('First serve in, lob to the backhand corner, take the net together','Prima di servizio dentro, pallonetto sull’angolo del rovescio, a rete insieme')};
+  else if(tag)cue={t:tg(tag,'cue'),tip:tg(tag,'tip')};
+  else if(g.length>=3&&g.slice(-3).every(x=>x.w))cue={t:tr('Stop the slide','Ferma la discesa'),tip:tr('Slow the tempo: high lobs and balls through the middle until they miss','Rallenta il ritmo: pallonetti alti e palle al centro finché sbagliano')};
+  else if(!nt&&nsv[0]>=2&&nsv[1]*2<nsv[0])cue={t:tr(`Protect ${N[0][np]}'s serve`,`Proteggi il servizio di ${N[0][np]}`),tip:tr(`Held ${nsv[1]} of ${nsv[0]} — first serve in at 80% pace, and ${N[0][1-np]} stays close to the net to poach`,`Tenuto ${nsv[1]} su ${nsv[0]} — prima dentro all’80%, e ${N[0][1-np]} resta vicino alla rete per intercettare`)};
+  else if(nt&&nsv[0]>=2&&nsv[1]*2<nsv[0])cue={t:tr(`Attack ${N[1][np]}'s serve`,`Attacca il servizio di ${N[1][np]}`),tip:tr(`They held only ${nsv[1]} of ${nsv[0]} on this serve — step in on the second serve and lob the net player`,`Hanno tenuto solo ${nsv[1]} su ${nsv[0]} con questo servizio — entra sulla seconda e pallonetto a chi è a rete`)};
+  else if(ri)cue=ri.short>ri.long?{t:tr('Keep the points short','Punti corti'),tip:tr(`You win ${ri.short}% of points under ~${ri.thr} bounces, ${ri.long}% in longer rallies — attack the first short ball`,`Vincete il ${ri.short}% dei punti sotto ~${ri.thr} rimbalzi, il ${ri.long}% negli scambi lunghi — attacca la prima palla corta`)}
+                                 :{t:tr('Make the points long','Allunga gli scambi'),tip:tr(`You win ${ri.long}% of long rallies, ${ri.short}% of short ones — high lobs, play the middle, let them miss`,`Vincete il ${ri.long}% degli scambi lunghi, il ${ri.short}% di quelli corti — pallonetti alti, gioca al centro, lasciali sbagliare`)};
+  else if(s.dp[0]>=3&&s.dp[1]*5<s.dp[0]*2)cue={t:tr('Win the deciding points','Vinci i punti decisivi'),tip:tr(`${s.dp[1]} of ${s.dp[0]} won — on the decider, serve to the body and play the percentage lob`,`${s.dp[1]} su ${s.dp[0]} vinti — sul punto decisivo servi sul corpo e gioca il pallonetto sicuro`)};
+  else if(g.length>=2&&!g.at(-1).w&&!g.at(-2).w)cue={t:tr('Momentum is yours','Il momento è vostro'),tip:tr('Change nothing: same positions, same patterns, same pace','Non cambiate niente: stesse posizioni, stessi schemi, stesso ritmo')};
+  else cue=nt?{t:tr('Win the return game','Vinci il game in risposta'),tip:tr('Low crosscourt returns, then move up behind the ball','Risposte basse incrociate, poi sali dietro la palla')}
+            :{t:tr(`${N[0][np]}: hold this game`,`${N[0][np]}: tieni questo game`),tip:tr('First serve in, follow it to the net, volley deep down the middle','Prima dentro, segui a rete, volée profonda al centro')};
+  const chips=[tr(`Win chance ${Math.round(winProb(s,m)*100)}%`,`Prob. vittoria ${Math.round(winProb(s,m)*100)}%`),`${tr('Held','Tenuti')} ${held(s,0)}/${served(s,0)}`,`Break ${served(s,1)-held(s,1)}/${served(s,1)}`];
+  if(s.dp[0])chips.push(`${tr(RULES[m.rule].n.split(' ')[0]+' points','Punti decisivi')} ${s.dp[1]}/${s.dp[0]}`);
   const shots=m.points.slice(-12).filter(p=>p.s).map(p=>p.s);
-  if(shots.length)chips.push(`Recent rallies ${avg(shots).toFixed(1)} bounces`);
+  if(shots.length)chips.push(tr(`Recent rallies ${avg(shots).toFixed(1)} bounces`,`Ultimi scambi ${avg(shots).toFixed(1)} rimbalzi`));
   return{cue,chips};
 }
 
@@ -409,7 +424,7 @@ const demoHistory=()=>[[5,'Gio','Nico',2],[12,'Diego','Pablo',6],[21,'Sara','Ale
 // ── state + storage ──
 const $=id=>document.getElementById(id);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)'), touch=matchMedia('(hover: none)');
-const store={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){if(!store.warned){store.warned=true;toast('Not saved — phone storage is full or blocked')}}}};
+const store={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){if(!store.warned){store.warned=true;toast(tr('Not saved — phone storage is full or blocked','Non salvato — memoria del telefono piena o bloccata'))}}}};
 const fix=m=>m&&Array.isArray(m.points)&&Array.isArray(m.players)?{rule:m.golden===false?'adv':'golden',notes:[],start:Date.now(),id:String(Date.now()),...m}:null;   // older saves had a golden flag
 const firstRun=store.get('changeover.history')===null;
 let match=firstRun?demoMatch():fix(store.get('changeover.v2'));
@@ -421,7 +436,7 @@ const save=()=>{store.set('changeover.v2',match);store.set('changeover.history',
 let toastT; const toast=msg=>{const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2800)};
 const clock=ms=>{const t=Math.max(0,ms/1000|0),h=t/3600|0,mm=(t/60|0)%60,ss=String(t%60).padStart(2,'0');return h?`${h}:${String(mm).padStart(2,'0')}:${ss}`:`${mm}:${ss}`};
 const running=()=>coachOpen||!match||!$('serve').hidden?0:Math.min(Date.now()-match.mark,300000);   // time since the last point; paused during the coach
-const when=ts=>new Date(ts).toLocaleString(undefined,{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const when=ts=>new Date(ts).toLocaleString(tr(undefined,'it-IT'),{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
 const archive=m=>{history=[{...m,endedAt:m.endedAt||Date.now()},...history.filter(h=>h.id!==m.id)]};
 
 // ── rendering ──
@@ -430,33 +445,33 @@ function render(){
   $('home').hidden=screen!=='home'; $('board').hidden=screen!=='board'; $('stats').hidden=screen!=='stats';
   $('tabs').hidden=!match; $('tabBoard').setAttribute('aria-pressed',screen==='board'); $('tabStats').setAttribute('aria-pressed',screen==='stats');
   $('micBtn').setAttribute('aria-pressed',!!mic);
-  $('awakeBtn').textContent=lock?'Screen stays on':'wakeLock' in navigator?'Keep screen on':'Keep screen on in settings';
+  $('awakeBtn').textContent=lock?tr('Screen stays on','Schermo sempre acceso'):'wakeLock' in navigator?tr('Keep screen on','Tieni lo schermo acceso'):tr('Keep screen on in settings','Schermo acceso: vedi impostazioni');
   $('awakeBtn').classList.toggle('on',!!lock);
   if(screen==='home')renderHome(); else if(screen==='board')renderBoard(); else renderStats();
 }
 
-function resultBadge(s){return s.winner===null?'<span class="badge open">Unfinished</span>':s.winner?'<span class="badge loss">Lost</span>':'<span class="badge win">Won</span>'}
+function resultBadge(s){return s.winner===null?`<span class="badge open">${tr('Unfinished','Non finita')}</span>`:s.winner?`<span class="badge loss">${tr('Lost','Persa')}</span>`:`<span class="badge win">${tr('Won','Vinta')}</span>`}
 function renderHome(){
   const r=$('resume');
   r.hidden=!match;
   if(match){
     const s=view;
-    r.innerHTML=`<h2>${match.demo?'Demo match':'Match in progress'} <small>${RULES[match.rule].n}</small></h2>
+    r.innerHTML=`<h2>${match.demo?tr('Demo match','Partita demo'):tr('Match in progress','Partita in corso')} <small>${ruleName(match.rule)}</small></h2>
       <b>${esc(teamName(match,0))}</b> <span class="empty">vs</span> <b>${esc(teamName(match,1))}</b>
       <p class="score">${scoreLine(s)||'0–0'} ${s.winner===null?`<small class="empty">${pointLabel(s,0)}–${pointLabel(s,1)}</small>`:resultBadge(s)}</p>
-      <p>${clock(s.total)} on court · ${match.points.length} points</p>
-      <div class="acts"><button class="btn go" id="resumeBtn">${s.winner===null?'Resume':'View'}</button><button class="btn" id="endBtn2">${match.demo?'Discard demo':'End &amp; save'}</button></div>`;
+      <p>${clock(s.total)} ${tr('on court','in campo')} · ${match.points.length} ${tr('points','punti')}</p>
+      <div class="acts"><button class="btn go" id="resumeBtn">${s.winner===null?tr('Resume','Riprendi'):tr('View','Vedi')}</button><button class="btn" id="endBtn2">${match.demo?tr('Discard demo','Scarta demo'):tr('End &amp; save','Fine e salva')}</button></div>`;
     $('resumeBtn').onclick=()=>go('board'); $('endBtn2').onclick=actions.end;
   }
-  $('hCount').textContent=history.length?`${history.length} saved`:'';
+  $('hCount').textContent=history.length?`${history.length} ${tr('saved','salvate')}`:'';
   $('hlist').innerHTML=history.length?history.map(h=>{const s=replay(h);return`<button class="hrow" data-id="${esc(h.id)}"><b>${esc(teamName(h,0))} ${resultBadge(s)}</b><span class="hs">${scoreLine(s)}</span>
       <small>vs ${esc(teamName(h,1))} · ${when(h.start)} · ${clock(s.total)}</small></button>`}).join('')
-    :'<p class="empty">Every match you finish — or end early — is saved here with its stats.</p>';
+    :`<p class="empty">${tr('Every match you finish — or end early — is saved here with its stats.','Ogni partita che finisci — o chiudi prima — viene salvata qui con le sue statistiche.')}</p>`;
   const demo=history.some(h=>h.demo)||match?.demo;
-  $('demoNote').innerHTML=demo?'Includes demo matches. <button id="clearDemo">Clear demo data</button>':'';
+  $('demoNote').innerHTML=demo?`${tr('Includes demo matches.','Include partite demo.')} <button id="clearDemo">${tr('Clear demo data','Cancella dati demo')}</button>`:'';
   if(demo)$('clearDemo').onclick=actions.clearDemo;
   const ios=/iP(hone|ad|od)/.test(navigator.userAgent), standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-  $('installTip').textContent=ios&&!standalone?'Tip: tap Share → Add to Home Screen to run Punto full screen, like an app.':'';
+  $('installTip').textContent=ios&&!standalone?tr('Tip: tap Share → Add to Home Screen to run Punto full screen, like an app.','Consiglio: tocca Condividi → Aggiungi alla schermata Home per usare Punto a tutto schermo, come un’app.'):'';
 }
 
 function renderBoard(){
@@ -464,27 +479,27 @@ function renderBoard(){
   [0,1].forEach(t=>{
     const el=$('team'+t);
     el.classList.toggle('serving',on&&st===t);
-    el.setAttribute('aria-label',`Point to ${teamName(match,t)}`);
-    el.innerHTML=`<div class="names">${N[t].map((n,p)=>`<span class="pl${on&&st===t&&sp===p?' srv':''}${on&&!chooser&&st!==t&&rp===p?' rcv':''}">${esc(n)}<small>${POS[p]}</small></span>`).join('')}</div>
-      <div class="tally">${s.setLog.map(g=>`<span class="set${g[t]>g[1-t]?' w':''}">${g[t]}</span>`).join('')}<span class="g"><small>GAMES </small>${on?s.games[t]:s.sets[t]}</span></div>
+    el.setAttribute('aria-label',tr(`Point to ${teamName(match,t)}`,`Punto a ${teamName(match,t)}`));
+    el.innerHTML=`<div class="names">${N[t].map((n,p)=>`<span class="pl${on&&st===t&&sp===p?' srv':''}${on&&!chooser&&st!==t&&rp===p?' rcv':''}">${esc(n)}<small>${pos(p)}</small></span>`).join('')}</div>
+      <div class="tally">${s.setLog.map(g=>`<span class="set${g[t]>g[1-t]?' w':''}">${g[t]}</span>`).join('')}<span class="g"><small>GAME${tr('S','')} </small>${on?s.games[t]:s.sets[t]}</span></div>
       <div class="pts">${on?pointLabel(s,t):s.winner===t?'WIN':''}</div>`;
   });
-  const tot=s.games[0]+s.games[1], label=match.rule==='star'?(s.decisive?'Star point':`Deuce ${s.deuce} of 3`):match.rule==='golden'?'Golden point':'Deuce';
+  const tot=s.games[0]+s.games[1], label=match.rule==='star'?(s.decisive?'Star point':tr(`Deuce ${s.deuce} of 3`,`Parità ${s.deuce} di 3`)):match.rule==='golden'?'Golden point':tr('Deuce','Parità');
   $('status').classList.toggle('hot',s.deuce>0||s.tb);
-  $('status').textContent=!on?`${teamName(match,s.winner)} win ${scoreLine(s)} — saved to history`
-    :s.decisive?`${label} — ${teamName(match,1-st)} choose who receives · ${N[st][sp]} serves`
-    :`${s.deuce?label+' · ':''}${s.tb?'Tiebreak · ':''}${N[st][sp]} serves from the ${rp?'left':'right'} to ${N[1-st][rp]}${!s.tb&&!s.pts[0]&&!s.pts[1]&&tot%2===0&&tot?' · change ends after this game':''}`;
+  $('status').textContent=!on?tr(`${teamName(match,s.winner)} win ${scoreLine(s)} — saved to history`,`${teamName(match,s.winner)} vincono ${scoreLine(s)} — salvata nello storico`)
+    :s.decisive?tr(`${label} — ${teamName(match,1-st)} choose who receives · ${N[st][sp]} serves`,`${label} — ${teamName(match,1-st)} scelgono chi riceve · serve ${N[st][sp]}`)
+    :`${s.deuce?label+' · ':''}${s.tb?'Tiebreak · ':''}${tr(`${N[st][sp]} serves from the ${rp?'left':'right'} to`,`${N[st][sp]} serve da ${rp?'sinistra':'destra'} a`)} ${N[1-st][rp]}${!s.tb&&!s.pts[0]&&!s.pts[1]&&tot%2===0&&tot?tr(' · change ends after this game',' · cambio campo dopo questo game'):''}`;
   $('fsBtn').hidden=!document.documentElement.requestFullscreen;
   tickClocks();
 }
 
 const pct=x=>x[0]?Math.round(100*x[1]/x[0])+'%':'–';
-const playersTable=(m,s)=>'<tr><th>Player</th><th>Serve held</th><th>Return won</th></tr>'+[0,1].flatMap(t=>m.players[t].map((n,p)=>
-  `<tr><td class="t${t}">${esc(n)} <small>${POS[p]}</small></td><td><b>${s.sv[t][p][1]}/${s.sv[t][p][0]}</b></td><td><b>${pct(s.rx[t][p])}</b> <small>of ${s.rx[t][p][0]}</small></td></tr>`)).join('');
+const playersTable=(m,s)=>`<tr><th>${tr('Player','Giocatore')}</th><th>${tr('Serve held','Servizi tenuti')}</th><th>${tr('Return won','Risposta vinta')}</th></tr>`+[0,1].flatMap(t=>m.players[t].map((n,p)=>
+  `<tr><td class="t${t}">${esc(n)} <small>${pos(p)}</small></td><td><b>${s.sv[t][p][1]}/${s.sv[t][p][0]}</b></td><td><b>${pct(s.rx[t][p])}</b> <small>${tr('of','su')} ${s.rx[t][p][0]}</small></td></tr>`)).join('');
 function timeStats(m,s){
   const g=s.gameLog.filter(x=>!x.tb), longest=g.reduce((a,x)=>x.d>(a?.d??0)?x:a,null), d=m.points.map(p=>p.d).filter(x=>x<120000);
-  return{kv:[['Avg point',d.length?clock(avg(d)):'–'],['Avg game',g.length?clock(avg(g.map(x=>x.d))):'–'],['Longest game',longest?clock(longest.d):'–']].map(([k,v])=>`<span>${k}<b>${v}</b></span>`).join(''),
-    sub:s.setDur.map((x,i)=>`Set ${i+1}: ${clock(x)}`).join(' · ')+(longest?`${s.setDur.length?' · ':''}Longest game: ${longest.n} points`:'')};
+  return{kv:[[tr('Avg point','Punto medio'),d.length?clock(avg(d)):'–'],[tr('Avg game','Game medio'),g.length?clock(avg(g.map(x=>x.d))):'–'],[tr('Longest game','Game più lungo'),longest?clock(longest.d):'–']].map(([k,v])=>`<span>${k}<b>${v}</b></span>`).join(''),
+    sub:s.setDur.map((x,i)=>`Set ${i+1}: ${clock(x)}`).join(' · ')+(longest?`${s.setDur.length?' · ':''}${tr('Longest game','Game più lungo')}: ${longest.n} ${tr('points','punti')}`:'')};
 }
 function spark(m,s){
   const tr=[...Array(m.points.length+1).keys()].map(i=>winProb(replay({...m,points:m.points.slice(0,i)}),m));
@@ -505,11 +520,11 @@ function renderRadar(){
   const pts=match.points.filter(p=>p.s), show=pts.slice(-24), max=Math.max(12,...show.map(p=>p.s),live.cur), ri=rallyInsight(match);
   $('strip').innerHTML=show.map((p,i)=>`<rect x="${i*12}" y="${40-p.s/max*38}" width="8" height="${p.s/max*38}" rx="1.5" class="w${p.w}"/>`).join('')
     +(live.cur?`<rect x="${show.length*12}" y="${40-live.cur/max*38}" width="8" height="${live.cur/max*38}" rx="1.5" class="now"/>`:'');
-  $('rStats').innerHTML=pts.length?`<span><b>${avg(pts.map(p=>p.s)).toFixed(1)}</b>bounces per point</span><span><b>${Math.max(...pts.map(p=>p.s))}</b>longest rally</span><span>${ri?`You win <b>${ri.short}%</b>short vs <b>${ri.long}%</b>long rallies`:'Bars: recent points, coloured by who won'}</span>`
-    :'<span>Turn on the mic and each point gets its bounce count. Glass and racket hits count too — it is a relative measure.</span>';
+  $('rStats').innerHTML=pts.length?`<span><b>${avg(pts.map(p=>p.s)).toFixed(1)}</b>${tr('bounces per point','rimbalzi per punto')}</span><span><b>${Math.max(...pts.map(p=>p.s))}</b>${tr('longest rally','scambio più lungo')}</span><span>${ri?tr(`You win <b>${ri.short}%</b>short vs <b>${ri.long}%</b>long rallies`,`Vincete il <b>${ri.short}%</b>dei corti e il <b>${ri.long}%</b>dei lunghi`):tr('Bars: recent points, coloured by who won','Barre: ultimi punti, colorate per chi li ha vinti')}</span>`
+    :`<span>${tr('Turn on the mic and each point gets its bounce count. Glass and racket hits count too — it is a relative measure.','Accendi il microfono e ogni punto avrà il conteggio dei rimbalzi. Contano anche vetro e racchetta — è una misura relativa.')}</span>`;
   $('rallyNow').textContent=live.cur||pts.at(-1)?.s||0;
-  $('rallyLbl').textContent=live.cur?'bounces now':'last point';
-  $('radarState').textContent=mic?'listening':'mic off · M to listen';
+  $('rallyLbl').textContent=live.cur?tr('bounces now','rimbalzi ora'):tr('last point','ultimo punto');
+  $('radarState').textContent=mic?tr('listening','in ascolto'):tr('mic off · M to listen','mic spento · M per ascoltare');
   $('sensV').textContent=sens;
 }
 
@@ -518,27 +533,27 @@ function openReport(id){
   const s=replay(m), ts=timeStats(m,s), sp=spark(m,s), ri=rallyInsight(m), shots=m.points.filter(p=>p.s).map(p=>p.s);
   const row=t=>`<tr><td class="t${t}">${esc(teamName(m,t))}</td>${s.setLog.concat(s.winner===null?[s.games]:[]).map(g=>`<td class="${g[t]>g[1-t]?'w':'l'}">${g[t]}</td>`).join('')}</tr>`;
   const won=m.points.filter(p=>!p.w).length;
-  $('reportBody').innerHTML=`<h3>${when(m.start)} ${resultBadge(s)}</h3><p>${RULES[m.rule].n} · ${clock(s.total)} on court · ${m.points.length} points</p>
+  $('reportBody').innerHTML=`<h3>${when(m.start)} ${resultBadge(s)}</h3><p>${ruleName(m.rule)} · ${clock(s.total)} ${tr('on court','in campo')} · ${m.points.length} ${tr('points','punti')}</p>
     <table class="sets" style="margin:14px 0">${row(0)}${row(1)}</table>
-    <div class="chips"><span>Points won ${Math.round(100*won/Math.max(1,m.points.length))}%</span><span>Held ${held(s,0)}/${served(s,0)}</span><span>Broke ${served(s,1)-held(s,1)}/${served(s,1)}</span>${s.dp[0]?`<span>Deciding points ${s.dp[1]}/${s.dp[0]}</span>`:''}${shots.length?`<span>${avg(shots).toFixed(1)} bounces per point</span>`:''}</div>
-    ${ri?`<p class="sub">You won ${ri.short}% of short rallies and ${ri.long}% of long ones.</p>`:''}
-    <h2 style="margin-top:18px">Match pulse</h2><svg class="spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true">${sp.svg}</svg>
-    <h2 style="margin-top:18px">Time on court</h2><div class="kv">${ts.kv}</div><p class="sub">${ts.sub}</p>
-    <h2 style="margin-top:18px">Players</h2><table>${playersTable(m,s)}</table>
-    <div class="row2"><button class="btn danger" id="delBtn">Delete</button><button class="btn" id="repClose">Close</button></div>`;
+    <div class="chips"><span>${tr('Points won','Punti vinti')} ${Math.round(100*won/Math.max(1,m.points.length))}%</span><span>${tr('Held','Tenuti')} ${held(s,0)}/${served(s,0)}</span><span>Break ${served(s,1)-held(s,1)}/${served(s,1)}</span>${s.dp[0]?`<span>${tr('Deciding points','Punti decisivi')} ${s.dp[1]}/${s.dp[0]}</span>`:''}${shots.length?`<span>${avg(shots).toFixed(1)} ${tr('bounces per point','rimbalzi per punto')}</span>`:''}</div>
+    ${ri?`<p class="sub">${tr(`You won ${ri.short}% of short rallies and ${ri.long}% of long ones.`,`Avete vinto il ${ri.short}% degli scambi corti e il ${ri.long}% di quelli lunghi.`)}</p>`:''}
+    <h2 style="margin-top:18px">${tr('Match pulse','Andamento')}</h2><svg class="spark" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true">${sp.svg}</svg>
+    <h2 style="margin-top:18px">${tr('Time on court','Tempo in campo')}</h2><div class="kv">${ts.kv}</div><p class="sub">${ts.sub}</p>
+    <h2 style="margin-top:18px">${tr('Players','Giocatori')}</h2><table>${playersTable(m,s)}</table>
+    <div class="row2"><button class="btn danger" id="delBtn">${tr('Delete','Elimina')}</button><button class="btn" id="repClose">${tr('Close','Chiudi')}</button></div>`;
   $('report').hidden=false;
   $('repClose').onclick=()=>$('report').hidden=true;
   let armed=false;   // delete needs a second tap within 4 s
   $('delBtn').onclick=e=>{
-    if(!armed){armed=true;e.currentTarget.textContent='Tap again to delete';setTimeout(()=>{armed=false;if($('delBtn'))$('delBtn').textContent='Delete'},4000);return}
-    history=history.filter(h=>h.id!==id);save();$('report').hidden=true;render();toast('Match deleted');
+    if(!armed){armed=true;e.currentTarget.textContent=tr('Tap again to delete','Tocca di nuovo per eliminare');setTimeout(()=>{armed=false;if($('delBtn'))$('delBtn').textContent=tr('Delete','Elimina')},4000);return}
+    history=history.filter(h=>h.id!==id);save();$('report').hidden=true;render();toast(tr('Match deleted','Partita eliminata'));
   };
 }
 
 // ── scoring: award() is the single entry point, ready for other input methods ──
 function award(w){
   if(!match||screen==='home')return;
-  if(view.winner!==null)return toast('Match over — start a new one from Home');
+  if(view.winner!==null)return toast(tr('Match over — start a new one from Home','Partita finita — iniziane una nuova dalla Home'));
   const now=Date.now(); if(now-lastTap<450)return; lastTap=now;
   hideServe();
   const p={w,d:Math.min(now-match.mark,300000)}, shots=Math.max(live.best,live.cur);
@@ -553,16 +568,16 @@ function award(w){
   beep(w?440:880,.12);   // hear which team got the point: high = your team, low = rivals
   if(e.ev==='match')openCoach(0);
   else if(e.ev)openServe(e);
-  else if(e.change==='tb')toast('Change ends');
+  else if(e.change==='tb')toast(tr('Change ends','Cambio campo'));
 }
 
 // ── start of each game: who serves to whom (closes itself unless you change ends) ──
 let serveT=null;
 function openServe(e){
   const s=view, [st,sp]=s.next, rt=1-st, N=match.players;
-  $('sHead').textContent=`${e.ev==='set'?'Set':'Game'} ${teamName(match,e.w)} · ${scoreLine(s)}${e.change?' · change ends':''}`;
-  $('sWho').innerHTML=`<span class="t${st}">${esc(N[st][sp])}</span> serves to <span class="t${rt}">${esc(N[rt][0])}</span>`;
-  $('sSub').textContent=`${s.tb?'Tiebreak · ':''}from the right · ${teamName(match,st)} vs ${teamName(match,rt)}`;
+  $('sHead').textContent=`${e.ev==='set'?'Set':'Game'} ${tr('','a ')}${teamName(match,e.w)} · ${scoreLine(s)}${e.change?tr(' · change ends',' · cambio campo'):''}`;
+  $('sWho').innerHTML=`<span class="t${st}">${esc(N[st][sp])}</span> ${tr('serves to','serve a')} <span class="t${rt}">${esc(N[rt][0])}</span>`;
+  $('sSub').textContent=`${s.tb?'Tiebreak · ':''}${tr('from the right','da destra')} · ${teamName(match,st)} vs ${teamName(match,rt)}`;
   $('serve').hidden=false; clearTimeout(serveT); serveT=e.change?null:setTimeout(closeServe,6000);
 }
 const hideServe=()=>{clearTimeout(serveT);$('serve').hidden=true};
@@ -583,7 +598,7 @@ function renderCoach(){
   $('cChips').innerHTML=c.chips.map(x=>`<span>${x}</span>`).join('');
   $('tagLbl').hidden=$('tags').hidden=!open;
   [...$('tags').children].forEach((b,i)=>b.setAttribute('aria-pressed',open&&note.tag===TAGS[i].k));
-  $('backBtn').firstChild.textContent=view.winner!==null?'Done ':'Back on court ';
+  $('backBtn').firstChild.textContent=view.winner!==null?tr('Done ','Fatto '):tr('Back on court ','In campo ');
 }
 function pickTag(i){
   const note=match.notes.at(-1); if(!note||note.at!==match.points.length)return;
@@ -593,21 +608,21 @@ function tick(now){
   const left=Math.max(0,(timer.end-now)/1000);
   $('tVal').textContent=Math.ceil(left); $('arc').style.strokeDashoffset=326.7*(1-left/timer.total);
   if(left<=15&&!timer.warned){timer.warned=true;$('timer').classList.add('warn');beep(660)}
-  if(!left){beep(990,.4);closeCoach();toast('Time — back on court')}
+  if(!left){beep(990,.4);closeCoach();toast(tr('Time — back on court','Tempo — tutti in campo'))}
 }
 
 // ── listening: bounces are short loud transients above a slowly adapting noise floor ──
 async function toggleMic(){
-  if(mic){mic.stream.getTracks().forEach(t=>t.stop());mic=null;$('lvl').style.width='0';render();return toast('Stopped listening')}
-  if(!navigator.mediaDevices?.getUserMedia)return toast('The microphone needs the app opened from a secure (https) address — scoring still works');
+  if(mic){mic.stream.getTracks().forEach(t=>t.stop());mic=null;$('lvl').style.width='0';render();return toast(tr('Stopped listening','Ascolto fermato'))}
+  if(!navigator.mediaDevices?.getUserMedia)return toast(tr('The microphone needs the app opened from a secure (https) address — scoring still works','Il microfono richiede l’app aperta da un indirizzo sicuro (https) — il punteggio funziona comunque'));
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
     const ctx=audio(), hp=ctx.createBiquadFilter(), an=ctx.createAnalyser();
     hp.type='highpass'; hp.frequency.value=1200; an.fftSize=1024;   // 21 ms window > one frame, so no bounce slips between frames
     ctx.createMediaStreamSource(stream).connect(hp).connect(an);
     mic={stream,an,buf:new Float32Array(an.fftSize),floor:.01};
-    toast('Listening for bounces — keep the phone near the court, screen on');
-  }catch(e){toast('Microphone blocked — bounce counts paused, scoring still works')}
+    toast(tr('Listening for bounces — keep the phone near the court, screen on','In ascolto dei rimbalzi — telefono vicino al campo, schermo acceso'));
+  }catch(e){toast(tr('Microphone blocked — bounce counts paused, scoring still works','Microfono bloccato — niente rimbalzi, il punteggio funziona comunque'))}
   keepAwake(); render();
 }
 function hit(now){
@@ -663,13 +678,13 @@ function openSetup(mode){
   const src=mode==='edit'?match:store.get('changeover.last')||{players:[['',''],['','']],order:[0,0],first:0,rule:'star'};
   [0,1].forEach(t=>{form['n'+t+'0'].value=src.players[t][0];form['n'+t+'1'].value=src.players[t][1];form['o'+t].value=src.order[t]});
   form.first.value=src.first; form.rule.value=src.rule;
-  $('setupTitle').textContent=mode==='edit'?'Players & rules':'New match';
-  $('setupGo').textContent=mode==='edit'?'Save':'Start match';
+  $('setupTitle').textContent=mode==='edit'?tr('Players & rules','Giocatori e regole'):tr('New match','Nuova partita');
+  $('setupGo').textContent=mode==='edit'?tr('Save','Salva'):tr('Start match','Inizia partita');
   $('setup').hidden=false; if(!touch.matches)form.n00.focus();
 }
 form.addEventListener('submit',e=>{
   e.preventDefault();
-  const def=[['You','Partner'],['Rival 1','Rival 2']];
+  const def=tr([['You','Partner'],['Rival 1','Rival 2']],[['Tu','Compagno'],['Avversario 1','Avversario 2']]);
   const cfg={players:[0,1].map(t=>[0,1].map(p=>form['n'+t+p].value.trim()||def[t][p])),order:[+form.o0.value,+form.o1.value],first:+form.first.value,rule:form.rule.value};
   store.set('changeover.last',cfg);
   if(setupMode==='edit')Object.assign(match,cfg);
@@ -680,35 +695,46 @@ form.addEventListener('submit',e=>{
   }
   $('setup').hidden=true; audio(); keepAwake(); save(); render();
   navigator.storage?.persist?.().catch(()=>{});   // ask the browser not to clean up saved matches
-  toast(setupMode==='edit'?'Saved — score recomputed':`${match.players[match.first][match.order[match.first]]} serves first · ${RULES[match.rule].n}`);
+  toast(setupMode==='edit'?tr('Saved — score recomputed','Salvato — punteggio ricalcolato'):`${tr('','Serve per primo ')}${match.players[match.first][match.order[match.first]]}${tr(' serves first','')} · ${ruleName(match.rule)}`);
 });
 
 const go=s=>{if(s!=='home'&&!match)return;screen=s;render()};
 const actions={
   undo(){
-    if(screen==='home'&&undoEnd){match=undoEnd;undoEnd=null;history=history.filter(h=>h.id!==match.id);screen='board';save();render();return toast('Match restored')}
-    if(!match||!match.points.length)return toast('Nothing to undo');
+    if(screen==='home'&&undoEnd){match=undoEnd;undoEnd=null;history=history.filter(h=>h.id!==match.id);screen='board';save();render();return toast(tr('Match restored','Partita ripristinata'))}
+    if(!match||!match.points.length)return toast(tr('Nothing to undo','Niente da annullare'));
     if(view.winner!==null)history=history.filter(h=>h.id!==match.id);
     match.points.pop(); if(match.notes.at(-1)?.at>match.points.length)match.notes.pop();
-    hideServe(); closeCoach(); save(); render(); beep(220,.35); toast('Last point undone');
+    hideServe(); closeCoach(); save(); render(); beep(220,.35); toast(tr('Last point undone','Ultimo punto annullato'));
   },
   end(){
     if(!match)return;
-    if(!match.demo&&match.points.length){archive(match);undoEnd=match;toast('Saved to history — U restores it')}else toast(match.demo?'Demo discarded':'Empty match discarded');
+    if(!match.demo&&match.points.length){archive(match);undoEnd=match;toast(tr('Saved to history — U restores it','Salvata nello storico — Annulla la ripristina'))}else toast(match.demo?tr('Demo discarded','Demo scartata'):tr('Empty match discarded','Partita vuota scartata'));
     match=null; hideServe(); closeCoach(); screen='home'; save(); render();
   },
-  clearDemo(){history=history.filter(h=>!h.demo);if(match?.demo)match=null;save();render();toast('Demo data cleared')},
+  clearDemo(){history=history.filter(h=>!h.demo);if(match?.demo)match=null;save();render();toast(tr('Demo data cleared','Dati demo cancellati'))},
   theme(){const th=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=th;store.set('changeover.theme',th)},
-  sens(d){sens=Math.min(9,Math.max(1,sens+d));store.set('changeover.sens',sens);renderRadar();toast(`Bounce sensitivity ${sens}`)},
+  sens(d){sens=Math.min(9,Math.max(1,sens+d));store.set('changeover.sens',sens);renderRadar();toast(`${tr('Bounce sensitivity','Sensibilità rimbalzi')} ${sens}`)},
+  lang(){lang=tr('it','en');store.set('changeover.lang',lang);applyLang();render();if(coachOpen)renderCoach();toast(tr('Language: English','Lingua: italiano'))},
   full(){
     if(document.fullscreenElement)return document.exitFullscreen().catch(()=>{});
-    if(!document.documentElement.requestFullscreen)return toast('Full screen: add Punto to your Home Screen');
-    document.documentElement.requestFullscreen().catch(()=>toast('Full screen was blocked by the browser'));
+    if(!document.documentElement.requestFullscreen)return toast(tr('Full screen: add Punto to your Home Screen','Schermo intero: aggiungi Punto alla schermata Home'));
+    document.documentElement.requestFullscreen().catch(()=>toast(tr('Full screen was blocked by the browser','Schermo intero bloccato dal browser')));
   },
 };
 const help=open=>{$('help').hidden=!open};
 
-TAGS.forEach((t,i)=>{const b=document.createElement('button');b.innerHTML=`${t.n} <kbd>${i+1}</kbd>`;b.onclick=()=>pickTag(i);$('tags').append(b)});
+// static text carries its Italian in data-it / data-it-ph / data-it-aria; English is kept the first time we switch
+function applyLang(){
+  document.documentElement.lang=lang;
+  const sw=(sel,get,set,it)=>document.querySelectorAll(sel).forEach(el=>{el.dataset.en??=get(el);set(el,lang==='it'?el.dataset[it]:el.dataset.en)});
+  sw('[data-it]',el=>el.innerHTML,(el,v)=>el.innerHTML=v,'it');
+  sw('[data-it-ph]',el=>el.placeholder,(el,v)=>el.placeholder=v,'itPh');
+  sw('[data-it-aria]',el=>el.getAttribute('aria-label'),(el,v)=>el.setAttribute('aria-label',v),'itAria');
+  $('tags').replaceChildren(...TAGS.map((t,i)=>{const b=document.createElement('button');b.innerHTML=`${tg(t,'n')} <kbd>${i+1}</kbd>`;b.onclick=()=>pickTag(i);return b}));
+  $('langBtn').textContent=tr('Italiano','English');
+}
+applyLang();
 $('team0').onclick=()=>award(0); $('team1').onclick=()=>award(1);
 $('undoBtn').onclick=actions.undo; $('coachBtn').onclick=coachNow; $('serve').onclick=closeServe; $('setupBtn').onclick=()=>openSetup('edit'); $('endBtn').onclick=actions.end; $('fsBtn').onclick=actions.full;
 $('newBtn').onclick=()=>openSetup('new'); $('setupCancel').onclick=()=>$('setup').hidden=true;
@@ -716,7 +742,7 @@ $('homeBtn').onclick=()=>go('home'); $('tabBoard').onclick=()=>go('board'); $('t
 $('hlist').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b)openReport(b.dataset.id)});
 $('backBtn').onclick=closeCoach;
 $('micBtn').onclick=toggleMic; $('themeBtn').onclick=actions.theme; $('helpBtn').onclick=()=>help(true); $('helpClose').onclick=()=>help(false);
-$('awakeBtn').onclick=keepAwake;
+$('awakeBtn').onclick=keepAwake; $('langBtn').onclick=actions.lang;
 $('sensDown').onclick=()=>actions.sens(-1); $('sensUp').onclick=()=>actions.sens(1);
 ['help','setup','report'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target.id===id)$(id).hidden=true}));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keepAwake()});
@@ -737,7 +763,7 @@ addEventListener('keydown',e=>{
     if(k==='ArrowRight'||k==='2')return act(()=>award(1));
     if(lk==='c')return act(coachNow);
   }
-  const map={u:actions.undo,v:()=>go(screen==='board'?'stats':'board'),h:()=>go('home'),n:()=>openSetup('new'),e:actions.end,p:()=>match&&openSetup('edit'),m:toggleMic,f:actions.full,t:actions.theme,'[':()=>actions.sens(-1),']':()=>actions.sens(1)}[lk];
+  const map={u:actions.undo,v:()=>go(screen==='board'?'stats':'board'),h:()=>go('home'),n:()=>openSetup('new'),e:actions.end,p:()=>match&&openSetup('edit'),m:toggleMic,f:actions.full,t:actions.theme,l:actions.lang,'[':()=>actions.sens(-1),']':()=>actions.sens(1)}[lk];
   if(map)act(map);
 });
 

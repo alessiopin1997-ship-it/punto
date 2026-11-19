@@ -20,6 +20,7 @@ A padel match app used **mainly on iPhone**, with the phone placed at the court 
 - **Coach (on demand)**: owner's group stops only between sets, so the coach no longer opens by itself at changeovers — "Coach" button / C key opens it (no timer); it still opens once at match end. Shows one focus tip (e.g. "Protect Luca's serve", "Keep the points short") from hold/break per player, momentum, rally length vs points won, deciding points. Optional "what hurt you most?" tags sharpen the tip.
 - **Insights tab**: win chance after every point (Markov model on serve/return points), rally radar, time on court, per-player serve holds and return points won.
 - **Home + history**: resume / end & save the current match, New match, history of saved matches with a full report per match (delete possible). Finished matches auto-save; "End" saves unfinished ones (court time ran out).
+- **English / Italian**: follows the phone's language, "Italiano / English" button on Home (and L key) overrides it and is remembered. Italian positions: *dritto* / *rovescio*. In code: `tr(en,it)` for dynamic text; static HTML carries `data-it` (innerHTML), `data-it-ph` (placeholder), `data-it-aria` (aria-label), applied by `applyLang()`. **Every new user-facing string needs both languages.**
 - Dark/light theme (follows system, toggle remembered), help overlay (`?`), keyboard shortcuts for every action, demo data on first run ("Clear demo data" removes it).
 
 ## How it is built (today)
@@ -30,7 +31,7 @@ A padel match app used **mainly on iPhone**, with the phone placed at the court 
   - **Input**: `award(w)` (w = 0 your team, 1 rivals), `actions.undo/end/...`, keyboard handler.
   - **Mic**: Web Audio high-pass filter + analyser, adaptive noise floor, sensitivity 1–9.
 - **Match data**: `{id, players:[[drive,revés],[drive,revés]], first, order:[i,i], rule:'star'|'golden'|'adv', points:[{w, d (ms), s (bounces, optional)}], notes:[{at, tag}], mark, start, demo?}`.
-- **Storage (localStorage)**: `changeover.v2` current match, `changeover.history` saved matches, `changeover.last` last setup, `changeover.theme`, `changeover.sens`. Old saves with a `golden` flag are migrated by `fix()`. A failed write shows a one-time "Not saved" toast; `navigator.storage.persist()` is requested when a match starts; deleting a saved match needs a second tap within 4 s.
+- **Storage (localStorage)**: `changeover.v2` current match, `changeover.history` saved matches, `changeover.last` last setup, `changeover.theme`, `changeover.sens`, `changeover.lang`. Old saves with a `golden` flag are migrated by `fix()`. A failed write shows a one-time "Not saved" toast; `navigator.storage.persist()` is requested when a match starts; deleting a saved match needs a second tap within 4 s.
 - **iPhone storage caveat**: Safari tab and Home Screen app have separate storage, and Safari tabs can be wiped after ~7 days unused → owner should always use the Home Screen icon. The only copy is on the phone.
 
 ## Hard-won details (don't break these)
