@@ -38,6 +38,8 @@ A padel match app used **mainly on iPhone**, with the phone placed at the court 
 - Serve rotation: team A player → team B player → A partner → B partner. Side: right on even point count, left on odd. Receiver = drive on right, revés on left. Tiebreak: first server 1 point, then 2 each; change ends every 6 points.
 - At golden/star deciding point the receiving pair chooses who receives (no fixed receiver highlighted).
 - Changeovers: after odd games in a set; also at set end if the set's total is odd.
+- Landscape scoreboard must fit one screen with **no scrolling** (body becomes a 100dvh flex column via `:has(#board:not([hidden]))`): names+games on one row, one-row bar (status, match clock only, buttons), point font sized from `100dvh`. Checked at 844×390, 667×375, 932×430.
+- Help shows the version = `document.lastModified` (GitHub Pages Last-Modified), nothing to bump by hand.
 - iPhone: inputs must be ≥16px font (stops zoom), tap targets ≥44px, safe-area insets, `100dvh`, no Fullscreen API on iPhone (use Add to Home Screen). Wake Lock and microphone need **https**.
 - No console errors or warnings, including when the mic is denied or storage is blocked.
 

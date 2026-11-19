@@ -80,13 +80,20 @@ h2{margin-bottom:12px}h2 small,.eyebrow small{letter-spacing:.04em;text-transfor
 .status.hot{color:var(--us)}
 .clocks{display:flex;gap:16px;font-size:12px;color:var(--dim)}.clocks b{display:block;font:800 18px var(--num);color:var(--ink);font-variant-numeric:tabular-nums}
 .acts{display:flex;gap:6px;flex-wrap:wrap}
-@media(orientation:portrait),(max-width:700px){#board{grid-template-columns:1fr;grid-template-rows:1fr 1fr auto;grid-template-areas:"a" "b" "bar"}.pts{font-size:min(17vh,34vw)}}
-/* phone held sideways: every pixel goes to the score */
+@media(orientation:portrait){#board{grid-template-columns:1fr;grid-template-rows:1fr 1fr auto;grid-template-areas:"a" "b" "bar"}.pts{font-size:min(17vh,34vw)}}
+/* phone held sideways: everything on one screen, no scrolling; every spare pixel goes to the score */
 @media(orientation:landscape) and (max-height:520px){
-  .top{padding-top:6px;padding-bottom:6px}.icon{width:36px;height:36px}.tabs button{padding:5px 10px}
-  #board{gap:8px;padding-top:8px;min-height:calc(100dvh - 50px)}
-  .team{border-radius:20px;padding:10px 16px}.pl{font-size:16px}.tally{margin-top:4px;font-size:34px}.pts{font-size:min(44vh,20vw)}
-  .bar{padding:6px 12px;gap:6px 14px;border-radius:16px}.status{font-size:14px;flex-basis:200px}.clocks b{font-size:15px}.bar .btn{min-height:38px;padding:6px 11px}
+  body:has(#board:not([hidden])){height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+  body:has(#board:not([hidden])) #board{flex:1;min-height:0}
+  .top{padding-top:4px;padding-bottom:4px}.icon{width:36px;height:36px}.tabs button{padding:5px 10px}
+  #board{grid-template-rows:minmax(0,1fr) auto;gap:6px;padding-top:6px}
+  .team{border-radius:18px;padding:8px 14px;grid-template-columns:1fr auto;grid-template-rows:auto minmax(0,1fr)}
+  .pl{font-size:16px}.tally{grid-column:2;align-self:start;margin-top:0;font-size:34px}
+  .pts{grid-column:1/-1;font-size:min(calc((100dvh - 190px)*1.2),30vw)}.pts.done{font-size:min(calc((100dvh - 190px)*.8),14vw)}
+  .bar{flex-wrap:nowrap;padding:5px 10px;gap:12px;border-radius:14px}
+  .status{font-size:14px;flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .clocks>span:not(:first-child){display:none}.clocks b{font-size:15px}   /* game/rally clocks stay in portrait and Insights */
+  .acts{flex-wrap:nowrap}.bar .btn{padding:5px 10px;font-size:13px}
 }
 
 /* insights + report */
@@ -288,6 +295,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
       <span><kbd>?</kbd><kbd>Esc</kbd></span><span data-it="Apri / chiudi questo aiuto">Open / close this help</span>
     </div>
     <p style="margin-top:14px" data-it="Tutto resta su questo dispositivo: nessun account, nessuna rete, nessun audio salvato.">Everything stays on this device: no account, no network, no audio saved.</p>
+    <p class="note" id="ver"></p>
     <div class="row2"><button class="btn" id="helpClose" data-it="Chiudi">Close</button></div>
   </div>
 </div>
@@ -486,7 +494,7 @@ function renderBoard(){
     el.setAttribute('aria-label',tr(`Point to ${teamName(match,t)}`,`Punto a ${teamName(match,t)}`));
     el.innerHTML=`<div class="names">${N[t].map((n,p)=>`<span class="pl${on&&st===t&&sp===p?' srv':''}${on&&!chooser&&st!==t&&rp===p?' rcv':''}">${esc(n)}<small>${pos(p)}</small></span>`).join('')}</div>
       <div class="tally">${s.setLog.map(g=>`<span class="set${g[t]>g[1-t]?' w':''}">${g[t]}</span>`).join('')}<span class="g"><small>GAME${tr('S','')} </small>${on?s.games[t]:s.sets[t]}</span></div>
-      <div class="pts">${on?pointLabel(s,t):s.winner===t?'WIN':''}</div>`;
+      <div class="pts${on?'':' done'}">${on?pointLabel(s,t):s.winner===t?'WIN':''}</div>`;
   });
   const tot=s.games[0]+s.games[1], label=match.rule==='star'?(s.decisive?'Star point':tr(`Deuce ${s.deuce} of 3`,`Parità ${s.deuce} di 3`)):match.rule==='golden'?'Golden point':tr('Deuce','Parità');
   $('status').classList.toggle('hot',s.deuce>0||s.tb);
@@ -774,6 +782,9 @@ function applyLang(){
   sw('[data-it-aria]',el=>el.getAttribute('aria-label'),(el,v)=>el.setAttribute('aria-label',v),'itAria');
   $('tags').replaceChildren(...TAGS.map((t,i)=>{const b=document.createElement('button');b.innerHTML=`${tg(t,'n')} <kbd>${i+1}</kbd>`;b.onclick=()=>pickTag(i);return b}));
   $('langBtn').textContent=tr('Italiano','English');
+  // version = when this copy was published (the server's Last-Modified), so it is never out of date
+  const v=new Date(document.lastModified);
+  $('ver').textContent=`${tr('Version','Versione')} ${isNaN(v)?document.lastModified:v.toLocaleString(tr(undefined,'it-IT'),{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}`;
 }
 applyLang();
 $('team0').onclick=()=>award(0); $('team1').onclick=()=>award(1);
