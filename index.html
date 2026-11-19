@@ -8,6 +8,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Punto">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
 <title>Punto — padel scoreboard &amp; side-change coach</title>
 <script>/* theme before first paint: saved choice, else system */
 (()=>{let t;try{t=JSON.parse(localStorage.getItem('changeover.theme'))}catch(e){}
@@ -31,6 +33,8 @@ h2{margin-bottom:12px}h2 small,.eyebrow small{letter-spacing:.04em;text-transfor
 
 .top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:max(8px,env(safe-area-inset-top)) var(--sr) 8px var(--sl);background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:9px;font:800 16px var(--font);letter-spacing:-.02em;margin-right:auto}
+.wordmark{display:block;height:30px;width:auto}
+[data-theme=light] .wordmark{filter:invert(1) hue-rotate(180deg)}   /* white letters → dark, the lime ball stays green */
 .tabs{display:flex;border:1px solid var(--line);border-radius:12px;padding:3px}
 .tabs button{padding:7px 12px;border-radius:9px;font-weight:700;font-size:13px;color:var(--dim)}
 .tabs button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
@@ -169,7 +173,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
 </head>
 <body>
 <header class="top">
-  <button class="brand" id="homeBtn" aria-label="Home"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="2" width="24" height="24" rx="7" fill="var(--us)"/><path d="M8 11h12l-3-3M20 17H8l3 3" fill="none" stroke="var(--on)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Punto</span></button>
+  <button class="brand" id="homeBtn" aria-label="Home"><img class="wordmark" src="logo.png" alt="Punto" width="68" height="30"></button>
   <div class="tabs" id="tabs"><button id="tabBoard" data-it="Punti">Score</button><button id="tabStats" data-it="Analisi">Insights</button></div>
   <button class="pill" id="awakeBtn" title="Keep the screen on during the match"></button>
   <button class="icon" id="micBtn" title="Listen for ball bounces (M)" aria-label="Microphone" data-it-aria="Microfono" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 7.5a5 5 0 0 0 10 0M8 12.5V15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>

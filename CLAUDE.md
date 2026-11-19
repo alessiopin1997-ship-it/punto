@@ -24,7 +24,7 @@ A padel match app used **mainly on iPhone**, with the phone placed at the court 
 - Dark/light theme (follows system, toggle remembered), help overlay (`?`), keyboard shortcuts for every action, demo data on first run ("Clear demo data" removes it).
 
 ## How it is built (today)
-- **One file: `index.html`** (was `changeover.html`; renamed so the GitHub Pages link opens it directly) — HTML, CSS and JavaScript inline, no libraries, no network requests, system fonts only.
+- **One file: `index.html`** (was `changeover.html`; renamed so the GitHub Pages link opens it directly). Images next to it: `icon-180.png` (Home Screen icon, cropped from the owner's `Punto_applogo.png` so iOS does the rounding) and `logo.png` (header wordmark from `Punto_weblogo.png`, white letters — light theme recolours it with CSS `invert(1) hue-rotate(180deg)`). Originals kept in the repo. — HTML, CSS and JavaScript inline, no libraries, no network requests, system fonts only.
 - Structure inside the script:
   - **Model (pure functions)**: `replay(match)` rebuilds the whole state (score, server rotation, tiebreaks, stats, timings) from the list of points. Undo and rule changes work by replaying. `winProb`, `rallyInsight`, `coach`, `simulate` (demo data).
   - **View**: `render()` → `renderHome` / `renderBoard` / `renderStats`, plus coach screen, setup sheet (new/edit), report sheet, help.
