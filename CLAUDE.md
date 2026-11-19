@@ -16,7 +16,8 @@ A padel match app used **mainly on iPhone**, with the phone placed at the court 
 - **Point input (temporary)**: tap the half of the team that won the point (or ←/→ keys). Undo always available. All scoring goes through one function, `award(team)` — any future input method must call it.
 - **Timing**: match, set, game, point lengths; changeover breaks are excluded.
 - **Microphone (optional)**: detects ball bounces/strikes (sharp sounds) and attaches a "bounces" count to each point. Glass/racket hits also count — it is a *relative* measure, not an exact shot count.
-- **Side-change coach**: opens automatically at every change of ends (after odd games of a set; 90 s timer, 120 s between sets). Shows one focus tip (e.g. "Protect Luca's serve", "Keep the points short") from hold/break per player, momentum, rally length vs points won, deciding points. Optional "what hurt you most?" tags sharpen the tip.
+- **Serve screen**: after every game a full-screen "X serves to Y" message (tap to close; auto-closes after 6 s, but stays until tapped at a change of ends; the clock is paused while it is up, so breaks are not counted as point time).
+- **Coach (on demand)**: owner's group stops only between sets, so the coach no longer opens by itself at changeovers — "Coach" button / C key opens it (no timer); it still opens once at match end. Shows one focus tip (e.g. "Protect Luca's serve", "Keep the points short") from hold/break per player, momentum, rally length vs points won, deciding points. Optional "what hurt you most?" tags sharpen the tip.
 - **Insights tab**: win chance after every point (Markov model on serve/return points), rally radar, time on court, per-player serve holds and return points won.
 - **Home + history**: resume / end & save the current match, New match, history of saved matches with a full report per match (delete possible). Finished matches auto-save; "End" saves unfinished ones (court time ran out).
 - Dark/light theme (follows system, toggle remembered), help overlay (`?`), keyboard shortcuts for every action, demo data on first run ("Clear demo data" removes it).
@@ -55,5 +56,5 @@ A padel match app used **mainly on iPhone**, with the phone placed at the court 
 
 ## How to work in this repo
 - Keep the model logic pure and the code readable; short comments that explain intent.
-- After changes, check: new match → score a star point → changeover coach → end → history report → undo, in portrait and landscape, dark and light, mic denied.
+- After changes, check: new match → score a star point → serve screen after a game → Coach button → end → history report → undo, in portrait and landscape, dark and light, mic denied.
 - Commit with clear messages; never lose the owner's saved match history (keep storage keys or migrate them).

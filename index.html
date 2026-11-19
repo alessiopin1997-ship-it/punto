@@ -70,8 +70,8 @@ h2{margin-bottom:12px}h2 small,.eyebrow small{letter-spacing:.04em;text-transfor
 .pl small{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
 .pl.srv::before{content:"";width:.6em;height:.6em;border-radius:50%;background:var(--c);box-shadow:0 0 14px var(--c)}
 .pl.rcv{color:var(--c)}
-.tally{display:flex;align-items:baseline;gap:14px;margin-top:10px;font:800 clamp(28px,4.5vw,48px)/1 var(--num)}
-.tally .set{color:var(--dim);font-size:.6em}.tally .set.w{color:var(--ink)}
+.tally{display:flex;align-items:baseline;gap:14px;margin-top:10px;font:800 clamp(36px,6vw,62px)/1 var(--num)}
+.tally .set{color:var(--dim);font-size:.7em}.tally .set.w{color:var(--ink)}
 .tally .g{color:var(--c);margin-left:auto}.tally small{font:600 11px var(--mono);color:var(--dim);letter-spacing:.1em}
 .pts{align-self:end;justify-self:end;font:800 min(32vh,21vw)/.82 var(--num);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
 .bar{grid-area:bar;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:12px 16px;border-radius:20px;background:var(--panel);border:1px solid var(--line)}
@@ -84,7 +84,7 @@ h2{margin-bottom:12px}h2 small,.eyebrow small{letter-spacing:.04em;text-transfor
 @media(orientation:landscape) and (max-height:520px){
   .top{padding-top:6px;padding-bottom:6px}.icon{width:36px;height:36px}.tabs button{padding:5px 10px}
   #board{gap:8px;padding-top:8px;min-height:calc(100dvh - 50px)}
-  .team{border-radius:20px;padding:10px 16px}.pl{font-size:16px}.tally{margin-top:4px;font-size:26px}.pts{font-size:min(44vh,20vw)}
+  .team{border-radius:20px;padding:10px 16px}.pl{font-size:16px}.tally{margin-top:4px;font-size:34px}.pts{font-size:min(44vh,20vw)}
   .bar{padding:6px 12px;gap:6px 14px;border-radius:16px}.status{font-size:14px;flex-basis:200px}.clocks b{font-size:15px}.bar .btn{min-height:38px;padding:6px 11px}
 }
 
@@ -131,6 +131,8 @@ td small{color:var(--dim)}td b{font:800 15px var(--num)}.t0{color:var(--us)}.t1{
 .tags button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 @media(max-width:600px){.coach{grid-template-columns:1fr;justify-items:center;text-align:center}.coach .eyebrow,.coach .chips,.coach .tags{justify-content:center}}
 @media(orientation:landscape) and (max-height:520px){.coach{grid-template-columns:auto 1fr;text-align:left}.timer{width:150px}.big{font-size:30px}}
+/* who serves at the start of each game */
+.serve{cursor:pointer;text-align:center}.serve .eyebrow{justify-content:center}.serve .big{font-size:clamp(34px,8vw,76px)}
 
 /* sheets */
 .overlay{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top)) var(--sr) max(16px,env(safe-area-inset-bottom)) var(--sl);background:rgba(5,7,10,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -183,6 +185,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
     <div class="clocks"><span>Match<b id="ckM"></b></span><span>Set<b id="ckS"></b></span><span>Game<b id="ckG"></b></span><span>Rally<b id="ckR">–</b></span></div>
     <div class="acts">
       <button class="btn" id="undoBtn">Undo <kbd>U</kbd></button>
+      <button class="btn" id="coachBtn">Coach <kbd>C</kbd></button>
       <button class="btn" id="setupBtn">Players <kbd>P</kbd></button>
       <button class="btn" id="endBtn">End <kbd>E</kbd></button>
       <button class="btn" id="fsBtn">Full screen <kbd>F</kbd></button>
@@ -217,6 +220,10 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
       <button class="cta" id="backBtn">Back on court <kbd>Enter</kbd></button>
     </div>
   </div>
+</div>
+
+<div class="screen serve" id="serve" role="status" hidden>
+  <div class="inner"><p class="eyebrow" id="sHead"></p><p class="big" id="sWho"></p><p class="tip" id="sSub"></p><p class="note">Tap anywhere to continue</p></div>
 </div>
 
 <div class="overlay" id="setup" hidden>
@@ -254,7 +261,7 @@ input[type=text],select{background:var(--bg);border:1px solid var(--line);border
     <ol>
       <li><b>New match</b>: enter names, positions (drive / revés), serve order and the deuce rule.</li>
       <li>After each point, tap the half of the team that won it. A high beep means your team got the point, a low beep the rivals, a long deep beep an undo. Undo is always one tap away.</li>
-      <li>On every change of ends the coach opens by itself: one focus, a 90-second timer, an optional "what hurt" tag.</li>
+      <li>After every game a screen shows who serves to whom. Tap <b>Coach</b> whenever you want one focus tip and an optional "what hurt" tag.</li>
       <li>Finished matches are saved automatically; press <b>End</b> to save an unfinished one when your court time runs out.</li>
     </ol>
     <div class="keys">
@@ -413,7 +420,7 @@ const live={cur:0,last:0,first:0,best:0};
 const save=()=>{store.set('changeover.v2',match);store.set('changeover.history',history)};
 let toastT; const toast=msg=>{const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2800)};
 const clock=ms=>{const t=Math.max(0,ms/1000|0),h=t/3600|0,mm=(t/60|0)%60,ss=String(t%60).padStart(2,'0');return h?`${h}:${String(mm).padStart(2,'0')}:${ss}`:`${mm}:${ss}`};
-const running=()=>coachOpen||!match?0:Math.min(Date.now()-match.mark,300000);   // time since the last point; paused during the coach
+const running=()=>coachOpen||!match||!$('serve').hidden?0:Math.min(Date.now()-match.mark,300000);   // time since the last point; paused during the coach
 const when=ts=>new Date(ts).toLocaleString(undefined,{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
 const archive=m=>{history=[{...m,endedAt:m.endedAt||Date.now()},...history.filter(h=>h.id!==m.id)]};
 
@@ -529,6 +536,7 @@ function award(w){
   if(!match||screen==='home')return;
   if(view.winner!==null)return toast('Match over — start a new one from Home');
   const now=Date.now(); if(now-lastTap<450)return; lastTap=now;
+  hideServe();
   const p={w,d:Math.min(now-match.mark,300000)}, shots=Math.max(live.best,live.cur);
   if(shots>=2)p.s=shots;
   live.best=live.cur=0; match.points.push(p); match.mark=now;
@@ -540,10 +548,22 @@ function award(w){
   if(navigator.vibrate&&touch.matches)navigator.vibrate(15);
   beep(w?440:880,.12);   // hear which team got the point: high = your team, low = rivals
   if(e.ev==='match')openCoach(0);
-  else if(e.change==='change'||e.change==='break')openCoach(e.change==='break'?120:90);
+  else if(e.ev)openServe(e);
   else if(e.change==='tb')toast('Change ends');
-  else if(e.ev)toast(`${e.ev==='set'?'Set':'Game'} ${teamName(match,w)}`);
 }
+
+// ── start of each game: who serves to whom (closes itself unless you change ends) ──
+let serveT=null;
+function openServe(e){
+  const s=view, [st,sp]=s.next, rt=1-st, N=match.players;
+  $('sHead').textContent=`${e.ev==='set'?'Set':'Game'} ${teamName(match,e.w)} · ${scoreLine(s)}${e.change?' · change ends':''}`;
+  $('sWho').innerHTML=`<span class="t${st}">${esc(N[st][sp])}</span> serves to <span class="t${rt}">${esc(N[rt][0])}</span>`;
+  $('sSub').textContent=`${s.tb?'Tiebreak · ':''}from the right · ${teamName(match,st)} vs ${teamName(match,rt)}`;
+  $('serve').hidden=false; clearTimeout(serveT); serveT=e.change?null:setTimeout(closeServe,6000);
+}
+const hideServe=()=>{clearTimeout(serveT);$('serve').hidden=true};
+function closeServe(){if($('serve').hidden)return;hideServe();if(match)match.mark=Date.now();save();render()}   // time on this screen is a break, not point time
+const coachNow=()=>match&&openCoach(0,match.notes.at(-1)?.at!==match.points.length);   // one "what hurt" note per point
 
 // ── side-change coach ──
 function openCoach(sec,note=true){
@@ -665,12 +685,12 @@ const actions={
     if(!match||!match.points.length)return toast('Nothing to undo');
     if(view.winner!==null)history=history.filter(h=>h.id!==match.id);
     match.points.pop(); if(match.notes.at(-1)?.at>match.points.length)match.notes.pop();
-    closeCoach(); save(); render(); beep(220,.35); toast('Last point undone');
+    hideServe(); closeCoach(); save(); render(); beep(220,.35); toast('Last point undone');
   },
   end(){
     if(!match)return;
     if(!match.demo&&match.points.length){archive(match);undoEnd=match;toast('Saved to history — U restores it')}else toast(match.demo?'Demo discarded':'Empty match discarded');
-    match=null; closeCoach(); screen='home'; save(); render();
+    match=null; hideServe(); closeCoach(); screen='home'; save(); render();
   },
   clearDemo(){history=history.filter(h=>!h.demo);if(match?.demo)match=null;save();render();toast('Demo data cleared')},
   theme(){const th=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=th;store.set('changeover.theme',th)},
@@ -685,7 +705,7 @@ const help=open=>{$('help').hidden=!open};
 
 TAGS.forEach((t,i)=>{const b=document.createElement('button');b.innerHTML=`${t.n} <kbd>${i+1}</kbd>`;b.onclick=()=>pickTag(i);$('tags').append(b)});
 $('team0').onclick=()=>award(0); $('team1').onclick=()=>award(1);
-$('undoBtn').onclick=actions.undo; $('setupBtn').onclick=()=>openSetup('edit'); $('endBtn').onclick=actions.end; $('fsBtn').onclick=actions.full;
+$('undoBtn').onclick=actions.undo; $('coachBtn').onclick=coachNow; $('serve').onclick=closeServe; $('setupBtn').onclick=()=>openSetup('edit'); $('endBtn').onclick=actions.end; $('fsBtn').onclick=actions.full;
 $('newBtn').onclick=()=>openSetup('new'); $('setupCancel').onclick=()=>$('setup').hidden=true;
 $('homeBtn').onclick=()=>go('home'); $('tabBoard').onclick=()=>go('board'); $('tabStats').onclick=()=>go('stats');
 $('hlist').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b)openReport(b.dataset.id)});
@@ -703,13 +723,14 @@ addEventListener('keydown',e=>{
   const sheet=['setup','report','help'].find(id=>!$(id).hidden);
   if(sheet){if(k==='Escape'||(sheet==='help'&&k==='?'))$(sheet).hidden=true;return}
   if(k==='?')return help(true);
+  if(!$('serve').hidden&&(k==='Enter'||k===' '||k==='Escape'))return act(closeServe);
   if(coachOpen){
     if(/^[1-6]$/.test(k))return act(()=>pickTag(+k-1));
     if(k==='Enter'||k===' '||k==='Escape')return act(closeCoach);
   }else if(screen!=='home'){
     if(k==='ArrowLeft'||k==='1')return act(()=>award(0));
     if(k==='ArrowRight'||k==='2')return act(()=>award(1));
-    if(lk==='c')return act(()=>openCoach(0,false));
+    if(lk==='c')return act(coachNow);
   }
   const map={u:actions.undo,v:()=>go(screen==='board'?'stats':'board'),h:()=>go('home'),n:()=>openSetup('new'),e:actions.end,p:()=>match&&openSetup('edit'),m:toggleMic,f:actions.full,t:actions.theme,'[':()=>actions.sens(-1),']':()=>actions.sens(1)}[lk];
   if(map)act(map);
