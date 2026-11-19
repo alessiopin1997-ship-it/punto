@@ -54,6 +54,7 @@ A padel match app used **mainly on iPhone**, with the phone placed at the court 
 - Tested only in headless Chrome emulating iPhone sizes — **not yet on a real iPhone / Safari**.
 
 ## What we will do next (roadmap — confirm order with the owner first)
+**NEXT: first real on-court match, Monday 2026-11-23.** Ask the owner how it went: wrist control (reliability, band title refresh, after 30–60 min, screen locked, together with the mic), landscape readability from ~10 m, serve screen after games, beeps audible, bounce counts vs real rallies (sensitivity), match saved in history, stats make sense. Then: fixes from the test → Backup (export/import) → offline (PWA).
 1. **Host it** on GitHub Pages (https link) so it runs on the iPhone. Public repo `alessiopin1997-ship-it/punto` → https://alessiopin1997-ship-it.github.io/punto/ (gh CLI is installed and logged in; publish = commit + push to `main`).
 2. **Test on the real iPhone** (Safari and "Add to Home Screen"): portrait/landscape, touch, wake lock, microphone permission, bounce detection on a real court (tune sensitivity defaults).
 3. **Offline use (PWA)**: web app manifest, icons, service worker so it works with poor signal at the court. This means moving from one file to a few files — fine for the product.
